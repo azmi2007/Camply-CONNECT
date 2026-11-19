@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Camply | Magang, Loker, dan Event Kampus</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="atas">
+  <div class="bungkus bar">
+    <a class="merek" href="#beranda">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23d5143c'/%3E%3Cpath d='M12 27L20 13L28 27' fill='none' stroke='%23fff' stroke-width='2.4'/%3E%3Ccircle cx='12' cy='27' r='4' fill='%23fff'/%3E%3Ccircle cx='20' cy='13' r='4' fill='%23fff'/%3E%3Ccircle cx='28' cy='27' r='4' fill='%23fff'/%3E%3C/svg%3E" alt="Logo campus.connect" width="32" height="32">
+      <span>Camply<span class="titik-merek">.</span></span>
+    </a>
+    <nav aria-label="Menu utama">
+      <ul>
+        <li><a href="#info">Jelajahi</a></li>
+        <li><a href="#kalender">Kalender</a></li>
+        <li><a href="#perusahaan">Perusahaan</a></li>
+        <li><a class="nav-cta" href="#pasang">Pasang info</a></li>
+      </ul>
+      
+    </nav>
+  </div>
+</header>
+
+<main id="beranda">
+
+  <form class="sit" id="filter" action="#" method="get">
+
+    <section class="band bungkus" id="kalender">
+      <aside class="kalender" aria-label="Kalender info">
+        <h4 class="sr">Kalender info</h4>
+        <input type="radio" name="tgl" id="d-semua" class="sembunyi" checked>
+        <input type="radio" name="bln" id="bln-nov" class="sembunyi" checked>
+        <input type="radio" name="bln" id="bln-des" class="sembunyi">
+        <div class="bulan nov">
+          <div class="kal-judul">
+            <div class="kj-bulan"><span>Bulan</span><strong>11</strong></div>
+            <div class="kj-tahun"><span>Tahun</span><strong>2026</strong></div>
+          </div>
+          <div class="kal-badan">
+            <span class="panah mati"></span><label for="bln-des" class="panah maju" aria-label="Desember 2026"></label>
+            <table class="tabel-kal">
+              <thead><tr><th>Sen</th><th>Sel</th><th>Rab</th><th>Kam</th><th>Jum</th><th>Sab</th><th>Min</th></tr></thead>
+              <tbody>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="tgl ini">1</span></td></tr>
+                <tr><td><input type="radio" name="tgl" id="d-11-2" class="sembunyi"><label for="d-11-2" class="tgl ada">2</label></td><td><input type="radio" name="tgl" id="d-11-3" class="sembunyi"><label for="d-11-3" class="tgl ada">3</label></td><td><input type="radio" name="tgl" id="d-11-4" class="sembunyi"><label for="d-11-4" class="tgl ada">4</label></td><td><input type="radio" name="tgl" id="d-11-5" class="sembunyi"><label for="d-11-5" class="tgl ada">5</label></td><td><input type="radio" name="tgl" id="d-11-6" class="sembunyi"><label for="d-11-6" class="tgl ada">6</label></td><td><input type="radio" name="tgl" id="d-11-7" class="sembunyi"><label for="d-11-7" class="tgl ada">7</label></td><td><input type="radio" name="tgl" id="d-11-8" class="sembunyi"><label for="d-11-8" class="tgl ada">8</label></td></tr>
+                <tr><td><span class="tgl">9</span></td><td><span class="tgl">10</span></td><td><span class="tgl">11</span></td><td><span class="tgl">12</span></td><td><span class="tgl">13</span></td><td><input type="radio" name="tgl" id="d-11-14" class="sembunyi"><label for="d-11-14" class="tgl ada">14</label></td><td><span class="tgl">15</span></td></tr>
+                <tr><td><span class="tgl">16</span></td><td><span class="tgl">17</span></td><td><span class="tgl">18</span></td><td><span class="tgl">19</span></td><td><span class="tgl">20</span></td><td><span class="tgl">21</span></td><td><span class="tgl">22</span></td></tr>
+                <tr><td><span class="tgl">23</span></td><td><span class="tgl">24</span></td><td><span class="tgl">25</span></td><td><span class="tgl">26</span></td><td><span class="tgl">27</span></td><td><span class="tgl">28</span></td><td><span class="tgl">29</span></td></tr>
+                <tr><td><span class="tgl">30</span></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="bulan des">
+          <div class="kal-judul">
+            <div class="kj-bulan"><span>Bulan</span><strong>12</strong></div>
+            <div class="kj-tahun"><span>Tahun</span><strong>2026</strong></div>
+          </div>
+          <div class="kal-badan">
+            <label for="bln-nov" class="panah" aria-label="November 2026"></label><span class="panah maju mati"></span>
+            <table class="tabel-kal">
+              <thead><tr><th>Sen</th><th>Sel</th><th>Rab</th><th>Kam</th><th>Jum</th><th>Sab</th><th>Min</th></tr></thead>
+              <tbody>
+                <tr><td></td><td><span class="tgl">1</span></td><td><span class="tgl">2</span></td><td><span class="tgl">3</span></td><td><span class="tgl">4</span></td><td><input type="radio" name="tgl" id="d-12-5" class="sembunyi"><label for="d-12-5" class="tgl ada">5</label></td><td><span class="tgl">6</span></td></tr>
+                <tr><td><span class="tgl">7</span></td><td><span class="tgl">8</span></td><td><span class="tgl">9</span></td><td><span class="tgl">10</span></td><td><span class="tgl">11</span></td><td><input type="radio" name="tgl" id="d-12-12" class="sembunyi"><label for="d-12-12" class="tgl ada">12</label></td><td><span class="tgl">13</span></td></tr>
+                <tr><td><span class="tgl">14</span></td><td><span class="tgl">15</span></td><td><span class="tgl">16</span></td><td><span class="tgl">17</span></td><td><span class="tgl">18</span></td><td><span class="tgl">19</span></td><td><span class="tgl">20</span></td></tr>
+                <tr><td><span class="tgl">21</span></td><td><span class="tgl">22</span></td><td><span class="tgl">23</span></td><td><span class="tgl">24</span></td><td><span class="tgl">25</span></td><td><span class="tgl">26</span></td><td><span class="tgl">27</span></td></tr>
+                <tr><td><span class="tgl">28</span></td><td><span class="tgl">29</span></td><td><span class="tgl">30</span></td><td><span class="tgl">31</span></td><td></td><td></td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="kal-kaki">
+          <label for="d-semua" class="semua-tgl">Semua tanggal</label>
+          <label for="bln-nov" class="hari-ini">Hari ini</label>
+        </div>
+      </aside>
+      <div class="intro">
+        <span class="eyebrow">CAMPLY / CAMPUS CAREER NETWORK</span>
+        <h1>Temukan kesempatan terbaik melalui koneksi yang kamu percaya.</h1>
+        <p>Lowongan kerja, magang, dan event kampus terkurasi dalam satu tempat untuk membantu langkah kariermu dimulai.</p>
+        <div class="hero-actions">
+          <a class="tombol" href="#info">Jelajahi kesempatan</a>
+          <a class="hero-link" href="#kalender">Lihat kalender <span aria-hidden="true">→</span></a>
+        </div>
+        <ol class="legenda">
+          <li><strong>Tanggal tebal</strong> berarti ada info dan dapat diklik untuk menyaring daftar.</li>
+          <li>Warna penanda membedakan loker, magang, dan event.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="perusahaan" class="perusahaan bungkus" aria-labelledby="judul-perusahaan">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">OPPORTUNITIES FROM</span>
+          <h2 id="judul-perusahaan">Perusahaan yang sedang mencari talenta</h2>
+        </div>
+        <a class="hero-link" href="#info">Lihat semua <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="perusahaan-grid">
+        <a class="perusahaan-card" href="#info">
+          <span class="logo-bulat logo-navy">G</span>
+          <span><strong>GoTo Group</strong><small>4 kesempatan tersedia</small></span>
+          <span class="jenis-pil jenis-loker">Loker</span>
+        </a>
+        <a class="perusahaan-card" href="#info">
+          <span class="logo-bulat logo-orange">S</span>
+          <span><strong>Shopee Indonesia</strong><small>3 kesempatan tersedia</small></span>
+          <span class="jenis-pil jenis-magang">Magang</span>
+        </a>
+        <a class="perusahaan-card" href="#info">
+          <span class="logo-bulat logo-purple">B</span>
+          <span><strong>Bank Jago</strong><small>2 kesempatan tersedia</small></span>
+          <span class="jenis-pil jenis-event">Event</span>
+        </a>
+        <a class="perusahaan-card" href="#info">
+          <span class="logo-bulat logo-blue">T</span>
+          <span><strong>Telkom Indonesia</strong><small>5 kesempatan tersedia</small></span>
+          <span class="jenis-pil jenis-magang">Magang</span>
+        </a>
+      </div>
+    </section>
+
+    <section id="info" class="daftar bungkus">
+      <div class="section-heading daftar-heading">
+        <div>
+          <span class="eyebrow">DISCOVER YOUR NEXT STEP</span>
+          <h2>Lowongan, event, dan magang</h2>
+        </div>
+        <p class="section-description">Pilih peluang yang paling sesuai dengan tujuanmu.</p>
+      </div>
+      <div class="filter-bar">
+        <div class="pilih">
+          <label class="sr" for="f-jenis">Jenis info</label>
+          <select id="f-jenis" name="jenis">
+            <option value="semua">Semua jenis</option>
+            <option value="magang">Magang</option>
+            <option value="loker">Lowongan kerja</option>
+            <option value="event">Event kampus</option>
+          </select>
+        </div>
+        <div class="pilih">
+          <label class="sr" for="f-bidang">Bidang</label>
+          <select id="f-bidang" name="bidang">
+            <option value="semua">Semua bidang</option>
+            <option value="tek">Teknologi</option>
+            <option value="des">Desain</option>
+            <option value="bis">Bisnis</option>
+            <option value="sos">Sosial</option>
+          </select>
+        </div>
+        <div class="pilih">
+          <label class="sr" for="f-mode">Mode kerja</label>
+          <select id="f-mode" name="mode">
+            <option value="semua">Semua mode</option>
+            <option value="daring">Daring</option>
+            <option value="luring">Luring</option>
+            <option value="hybrid">Hybrid</option>
+          </select>
+        </div>
+        <div class="pilih">
+          <label class="sr" for="f-kata">Kata kunci</label>
+          <select id="f-kata" name="kata">
+            <option value="semua">Semua kata kunci</option>
+            <option value="data">Data</option>
+            <option value="desain">Desain</option>
+            <option value="konten">Konten</option>
+            <option value="web">Web</option>
+            <option value="keuangan">Keuangan</option>
+            <option value="lapangan">Lapangan</option>
+            <option value="karier">Karier</option>
+          </select>
+        </div>
+        <button type="reset" class="tombol">Atur ulang</button>
+      </div>
+
+      <div class="hasil">
+        <div class="urut-kotak">
+          <label for="urut">Urutkan</label>
+          <select id="urut" name="urut">
+            <option value="tenggat">Tanggal terdekat</option>
+            <option value="terbaru">Terbaru ditempel</option>
+            <option value="abjad">Judul A sampai Z</option>
+            <option value="uang">Uang saku tertinggi</option>
+          </select>
+        </div>
+          <article class="kartu magang b-tek m-hybrid d-11-5 kw-data" style="--t:6;--b:16;--a:8;--u:5">
+            <div class="poster v1" aria-hidden="true"><span>Nusa Data Analitika</span><strong>Magang Data Analyst</strong></div>
+            <div class="badan">
+              <span class="kat">Magang</span>
+              <h3>Magang Data Analyst</h3>
+              <ul class="info"><li class="i-tgl">Tutup 05 Nov 2026</li><li class="i-uang">Rp 2,5 jt per bulan</li><li class="i-lok">Hybrid di Bandung</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3ATenggat%3A%20Magang%20Data%20Analyst%0D%0ADTSTART%3BVALUE%3DDATE%3A20261105%0D%0ADTEND%3BVALUE%3DDATE%3A20261106%0D%0ALOCATION%3AHybrid%2C%20Bandung%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="magang-data-analyst.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+          <article class="kartu magang b-des m-daring d-11-7 kw-desain kw-web" style="--t:10;--b:15;--a:15;--u:8">
+            <div class="poster v2" aria-hidden="true"><span>Studio Kopi Tiga</span><strong>UI Designer Intern</strong></div>
+            <div class="badan">
+              <span class="kat">Magang</span>
+              <h3>UI Designer Intern</h3>
+              <ul class="info"><li class="i-tgl">Tutup 07 Nov 2026</li><li class="i-uang">Rp 1,5 jt per bulan</li><li class="i-lok">Daring dari Yogyakarta</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3ATenggat%3A%20UI%20Designer%20Intern%0D%0ADTSTART%3BVALUE%3DDATE%3A20261107%0D%0ADTEND%3BVALUE%3DDATE%3A20261108%0D%0ALOCATION%3ADaring%2C%20Yogyakarta%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="ui-designer-intern.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+          <article class="kartu loker b-bis m-luring d-11-7 kw-konten" style="--t:11;--b:14;--a:14;--u:2">
+            <div class="poster v0" aria-hidden="true"><span>Dapur Lokal Nusantara</span><strong>Staf Pemasaran Digital</strong></div>
+            <div class="badan">
+              <span class="kat">Lowongan kerja</span>
+              <h3>Staf Pemasaran Digital</h3>
+              <ul class="info"><li class="i-tgl">Tutup 07 Nov 2026</li><li class="i-uang">Rp 4,8 jt per bulan</li><li class="i-lok">Luring di Jakarta</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3ATenggat%3A%20Staf%20Pemasaran%20Digital%0D%0ADTSTART%3BVALUE%3DDATE%3A20261107%0D%0ADTEND%3BVALUE%3DDATE%3A20261108%0D%0ALOCATION%3ALuring%2C%20Jakarta%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="staf-pemasaran-digital.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+          <article class="kartu event b-tek m-luring d-11-4 kw-karier" style="--t:5;--b:13;--a:4;--u:12">
+            <div class="poster v1" aria-hidden="true"><span>BEM Fakultas Teknik</span><strong>Job Fair Kampus 2026</strong></div>
+            <div class="badan">
+              <span class="kat">Event kampus</span>
+              <h3>Job Fair Kampus 2026</h3>
+              <ul class="info"><li class="i-tgl">04 Nov 2026</li><li class="i-jam">09.00 - 16.00 WIB</li><li class="i-lok">Luring di Bandung</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3AJob%20Fair%20Kampus%202026%0D%0ADTSTART%3A20261104T090000%0D%0ADTEND%3A20261104T160000%0D%0ALOCATION%3ALuring%2C%20Bandung%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="job-fair-kampus-2026.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+          <article class="kartu event b-bis m-daring d-11-2 kw-karier" style="--t:1;--b:12;--a:16;--u:13">
+            <div class="poster v2" aria-hidden="true"><span>Pusat Karier Kampus</span><strong>Workshop CV dan LinkedIn</strong></div>
+            <div class="badan">
+              <span class="kat">Event kampus</span>
+              <h3>Workshop CV dan LinkedIn</h3>
+              <ul class="info"><li class="i-tgl">02 Nov 2026</li><li class="i-jam">13.00 - 15.00 WIB</li><li class="i-lok">Daring dari Bandung</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3AWorkshop%20CV%20dan%20LinkedIn%0D%0ADTSTART%3A20261102T130000%0D%0ADTEND%3A20261102T150000%0D%0ALOCATION%3ADaring%2C%20Bandung%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="workshop-cv-dan-linkedin.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+          <article class="kartu magang b-des m-luring d-11-2 kw-konten kw-desain" style="--t:2;--b:11;--a:9;--u:10">
+            <div class="poster v0" aria-hidden="true"><span>Radio Kampus Swara</span><strong>Magang Konten Kreatif</strong></div>
+            <div class="badan">
+              <span class="kat">Magang</span>
+              <h3>Magang Konten Kreatif</h3>
+              <ul class="info"><li class="i-tgl">Tutup 02 Nov 2026</li><li class="i-uang">Rp 1 jt per bulan</li><li class="i-lok">Luring di Bandung</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3ATenggat%3A%20Magang%20Konten%20Kreatif%0D%0ADTSTART%3BVALUE%3DDATE%3A20261102%0D%0ADTEND%3BVALUE%3DDATE%3A20261103%0D%0ALOCATION%3ALuring%2C%20Bandung%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="magang-konten-kreatif.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+          <article class="kartu loker b-tek m-hybrid d-11-14 kw-web" style="--t:13;--b:10;--a:5;--u:1">
+            <div class="poster v1" aria-hidden="true"><span>PT Sinar Piksel</span><strong>Junior Web Developer</strong></div>
+            <div class="badan">
+              <span class="kat">Lowongan kerja</span>
+              <h3>Junior Web Developer</h3>
+              <ul class="info"><li class="i-tgl">Tutup 14 Nov 2026</li><li class="i-uang">Rp 6 jt per bulan</li><li class="i-lok">Hybrid di Surabaya</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3ATenggat%3A%20Junior%20Web%20Developer%0D%0ADTSTART%3BVALUE%3DDATE%3A20261114%0D%0ADTEND%3BVALUE%3DDATE%3A20261115%0D%0ALOCATION%3AHybrid%2C%20Surabaya%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="junior-web-developer.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+          <article class="kartu magang b-sos m-luring d-11-6 kw-lapangan kw-data" style="--t:8;--b:9;--a:2;--u:7">
+            <div class="poster v2" aria-hidden="true"><span>Pusat Studi Desa</span><strong>Asisten Riset Lapangan</strong></div>
+            <div class="badan">
+              <span class="kat">Magang</span>
+              <h3>Asisten Riset Lapangan</h3>
+              <ul class="info"><li class="i-tgl">Tutup 06 Nov 2026</li><li class="i-uang">Rp 1,8 jt per bulan</li><li class="i-lok">Luring di Bogor</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3ATenggat%3A%20Asisten%20Riset%20Lapangan%0D%0ADTSTART%3BVALUE%3DDATE%3A20261106%0D%0ADTEND%3BVALUE%3DDATE%3A20261107%0D%0ALOCATION%3ALuring%2C%20Bogor%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="asisten-riset-lapangan.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+          <article class="kartu event b-bis m-hybrid d-11-8 kw-karier" style="--t:12;--b:8;--a:6;--u:14">
+            <div class="poster v0" aria-hidden="true"><span>Himpunan Manajemen</span><strong>Lomba Business Case Nasional</strong></div>
+            <div class="badan">
+              <span class="kat">Event kampus</span>
+              <h3>Lomba Business Case Nasional</h3>
+              <ul class="info"><li class="i-tgl">08 Nov 2026</li><li class="i-jam">08.00 - 17.00 WIB</li><li class="i-lok">Hybrid di Semarang</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3ALomba%20Business%20Case%20Nasional%0D%0ADTSTART%3A20261108T080000%0D%0ADTEND%3A20261108T170000%0D%0ALOCATION%3AHybrid%2C%20Semarang%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="lomba-business-case-nasional.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+          <article class="kartu loker b-bis m-luring d-11-6 kw-keuangan kw-data" style="--t:9;--b:7;--a:1;--u:3">
+            <div class="poster v1" aria-hidden="true"><span>CV Mitra Arsip</span><strong>Admin Keuangan</strong></div>
+            <div class="badan">
+              <span class="kat">Lowongan kerja</span>
+              <h3>Admin Keuangan</h3>
+              <ul class="info"><li class="i-tgl">Tutup 06 Nov 2026</li><li class="i-uang">Rp 3,9 jt per bulan</li><li class="i-lok">Luring di Malang</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3ATenggat%3A%20Admin%20Keuangan%0D%0ADTSTART%3BVALUE%3DDATE%3A20261106%0D%0ADTEND%3BVALUE%3DDATE%3A20261107%0D%0ALOCATION%3ALuring%2C%20Malang%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="admin-keuangan.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+          <article class="kartu magang b-tek m-daring d-11-3 kw-web" style="--t:3;--b:6;--a:10;--u:6">
+            <div class="poster v2" aria-hidden="true"><span>Teknologi Warung Digital</span><strong>Magang QA Engineer</strong></div>
+            <div class="badan">
+              <span class="kat">Magang</span>
+              <h3>Magang QA Engineer</h3>
+              <ul class="info"><li class="i-tgl">Tutup 03 Nov 2026</li><li class="i-uang">Rp 2,2 jt per bulan</li><li class="i-lok">Daring dari Jakarta</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3ATenggat%3A%20Magang%20QA%20Engineer%0D%0ADTSTART%3BVALUE%3DDATE%3A20261103%0D%0ADTEND%3BVALUE%3DDATE%3A20261104%0D%0ALOCATION%3ADaring%2C%20Jakarta%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="magang-qa-engineer.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+          <article class="kartu event b-des m-daring d-11-5 kw-karier kw-desain" style="--t:7;--b:5;--a:13;--u:15">
+            <div class="poster v0" aria-hidden="true"><span>Himpunan Desain</span><strong>Seminar Karier Industri Kreatif</strong></div>
+            <div class="badan">
+              <span class="kat">Event kampus</span>
+              <h3>Seminar Karier Industri Kreatif</h3>
+              <ul class="info"><li class="i-tgl">05 Nov 2026</li><li class="i-jam">19.00 - 21.00 WIB</li><li class="i-lok">Daring dari Yogyakarta</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3ASeminar%20Karier%20Industri%20Kreatif%0D%0ADTSTART%3A20261105T190000%0D%0ADTEND%3A20261105T210000%0D%0ALOCATION%3ADaring%2C%20Yogyakarta%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="seminar-karier-industri-kreatif.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+          <article class="kartu magang b-sos m-luring d-11-3 kw-lapangan" style="--t:4;--b:4;--a:12;--u:11">
+            <div class="poster v1" aria-hidden="true"><span>Yayasan Baca Bersama</span><strong>Pendamping Program Literasi</strong></div>
+            <div class="badan">
+              <span class="kat">Magang</span>
+              <h3>Pendamping Program Literasi</h3>
+              <ul class="info"><li class="i-tgl">Tutup 03 Nov 2026</li><li class="i-uang">Rp 0,9 jt per bulan</li><li class="i-lok">Luring di Bandung</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3ATenggat%3A%20Pendamping%20Program%20Literasi%0D%0ADTSTART%3BVALUE%3DDATE%3A20261103%0D%0ADTEND%3BVALUE%3DDATE%3A20261104%0D%0ALOCATION%3ALuring%2C%20Bandung%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="pendamping-program-literasi.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+          <article class="kartu loker b-des m-hybrid d-11-14 kw-desain kw-konten" style="--t:14;--b:3;--a:3;--u:4">
+            <div class="poster v2" aria-hidden="true"><span>Percetakan Lima Warna</span><strong>Graphic Designer Freelance</strong></div>
+            <div class="badan">
+              <span class="kat">Lowongan kerja</span>
+              <h3>Graphic Designer Freelance</h3>
+              <ul class="info"><li class="i-tgl">Tutup 14 Nov 2026</li><li class="i-uang">Rp 3,5 jt per bulan</li><li class="i-lok">Hybrid di Bandung</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3ATenggat%3A%20Graphic%20Designer%20Freelance%0D%0ADTSTART%3BVALUE%3DDATE%3A20261114%0D%0ADTEND%3BVALUE%3DDATE%3A20261115%0D%0ALOCATION%3AHybrid%2C%20Bandung%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="graphic-designer-freelance.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+          <article class="kartu event b-sos m-luring d-12-5 kw-karier" style="--t:15;--b:2;--a:11;--u:16">
+            <div class="poster v0" aria-hidden="true"><span>UKM Debat Kampus</span><strong>Pelatihan Public Speaking</strong></div>
+            <div class="badan">
+              <span class="kat">Event kampus</span>
+              <h3>Pelatihan Public Speaking</h3>
+              <ul class="info"><li class="i-tgl">05 Des 2026</li><li class="i-jam">14.00 - 17.00 WIB</li><li class="i-lok">Luring di Bandung</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3APelatihan%20Public%20Speaking%0D%0ADTSTART%3A20261205T140000%0D%0ADTEND%3A20261205T170000%0D%0ALOCATION%3ALuring%2C%20Bandung%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="pelatihan-public-speaking.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+          <article class="kartu magang b-sos m-daring d-12-12 kw-konten" style="--t:16;--b:1;--a:7;--u:9">
+            <div class="poster v1" aria-hidden="true"><span>Majalah Kampus Lensa</span><strong>Magang Content Writer</strong></div>
+            <div class="badan">
+              <span class="kat">Magang</span>
+              <h3>Magang Content Writer</h3>
+              <ul class="info"><li class="i-tgl">Tutup 12 Des 2026</li><li class="i-uang">Rp 1,2 jt per bulan</li><li class="i-lok">Daring dari Jakarta</li></ul>
+              <a class="tambah" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0ABEGIN%3AVEVENT%0D%0ASUMMARY%3ATenggat%3A%20Magang%20Content%20Writer%0D%0ADTSTART%3BVALUE%3DDATE%3A20261212%0D%0ADTEND%3BVALUE%3DDATE%3A20261213%0D%0ALOCATION%3ADaring%2C%20Jakarta%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="magang-content-writer.ics">Tambah ke kalender</a>
+            </div>
+          </article>
+        <p class="jumlah"></p>
+      </div>
+      <p class="catatan">Tidak menemukan yang cocok? Ubah pilihan di atas atau tekan Atur ulang.</p>
+    </section>
+
+  </form>
+
+  <section id="pasang" class="pasang">
+    <div class="bungkus">
+      <h2>Pasang info di campus.connect</h2>
+      <p>Punya info magang, lowongan, atau acara organisasi? Isi formulir ini, lalu datanya dikirim lewat email ke pengelola untuk ditayangkan.</p>
+      <form id="formPasang" action="mailto:admin@campusconnect.example" method="post" enctype="text/plain">
+        <h4>Kontak penyelenggara</h4>
+        <div class="baris">
+          <div class="kolom">
+            <label for="fOrg">Penyelenggara</label>
+            <input type="text" id="fOrg" name="penyelenggara" required placeholder="Nama perusahaan atau organisasi">
+          </div>
+          <div class="kolom">
+            <label for="fEmail">Email kontak</label>
+            <input type="email" id="fEmail" name="email" required placeholder="nama@contoh.id">
+          </div>
+          <div class="kolom">
+            <label for="fSandi">Kata sandi untuk mengubah info nanti</label>
+            <input type="password" id="fSandi" minlength="6" required>
+          </div>
+        </div>
+        <h4>Detail info</h4>
+        <div class="baris">
+          <div class="kolom">
+            <label for="fJudul">Judul info</label>
+            <input type="text" id="fJudul" name="judul" required placeholder="Contoh: Magang Desain Grafis">
+          </div>
+          <div class="kolom">
+            <label for="fTanggal">Tenggat atau tanggal acara</label>
+            <input type="date" id="fTanggal" name="tanggal" required>
+          </div>
+        </div>
+        <div class="baris">
+          <div class="kolom">
+            <label for="fUang">Uang saku (ribu rupiah)</label>
+            <input type="number" id="fUang" name="uang" min="0" step="100" value="0">
+          </div>
+          <div class="kolom">
+            <label for="fKota">Kota</label>
+            <select id="fKota" name="kota">
+              <option>Bandung</option>
+              <option>Jakarta</option>
+              <option>Yogyakarta</option>
+              <option>Surabaya</option>
+              <option>Semarang</option>
+              <option>Malang</option>
+            </select>
+          </div>
+        </div>
+        <div class="baris">
+          <div class="kolom">
+            <span class="judul-kecil">Jenis info</span>
+            <label class="sebaris"><input type="radio" name="jenis" value="magang" checked> Magang</label>
+            <label class="sebaris"><input type="radio" name="jenis" value="loker"> Loker</label>
+            <label class="sebaris"><input type="radio" name="jenis" value="event"> Event</label>
+          </div>
+          <div class="kolom">
+            <span class="judul-kecil">Bidang</span>
+            <label class="sebaris"><input type="checkbox" name="bidang" value="Teknologi"> Teknologi</label>
+            <label class="sebaris"><input type="checkbox" name="bidang" value="Desain"> Desain</label>
+            <label class="sebaris"><input type="checkbox" name="bidang" value="Bisnis"> Bisnis</label>
+            <label class="sebaris"><input type="checkbox" name="bidang" value="Sosial"> Sosial</label>
+          </div>
+        </div>
+        <label for="fDesk">Keterangan singkat</label>
+        <textarea id="fDesk" name="keterangan" rows="4" required placeholder="Tulis syarat utama, tugas, atau agenda acaranya."></textarea>
+        <input type="submit" class="tombol" value="Kirim ke pengelola">
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="kaki">
+  <div class="bungkus">
+    <div class="kaki-kiri">
+      <h5>campus.connect</h5>
+      <p>Proyek web satu halaman untuk tugas mata kuliah. Seluruh data lowongan dan acara di sini hanya <em>contoh</em>.</p>
+    </div>
+    <div class="kaki-kanan">
+      <h6>Tautan</h6>
+      <ul>
+        <li><a href="#info">Info</a></li>
+        <li><a href="#kalender">Kalender</a></li>
+        <li><a href="#pasang">Pasang info</a></li>
+      </ul>
+    </div>
+    <div class="bersih"></div>
+    <p class="hak">Hak cipta 2026 campus.connect. Dibuat hanya dengan HTML dan CSS.</p>
+  </div>
+</footer>
+
+</body>
+</html>
