@@ -1,5 +1,6 @@
 # Ignore local environment secrets
 .env
+.env.example
 
 # Ignore dependency directories
 node_modules/
@@ -7,4 +8,4 @@ vendor/
 
 # Ignore log files and temporary files
 *.log
-.DS_Store
+.DS_Store 

@@ -12,14 +12,14 @@
   <div class="bungkus bar">
     <a class="merek" href="#beranda">
       <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23d5143c'/%3E%3Cpath d='M12 27L20 13L28 27' fill='none' stroke='%23fff' stroke-width='2.4'/%3E%3Ccircle cx='12' cy='27' r='4' fill='%23fff'/%3E%3Ccircle cx='20' cy='13' r='4' fill='%23fff'/%3E%3Ccircle cx='28' cy='27' r='4' fill='%23fff'/%3E%3C/svg%3E" alt="Logo campus.connect" width="32" height="32">
-      <span>Camply<span 
-        class="titik-merek"></span></span>
+      <span>Camply<span class="titik-merek">.</span></span>
     </a>
     <nav aria-label="Menu utama">
       <ul>
-        <li><a href="#info">Info</a></li>
+        <li><a href="#info">Jelajahi</a></li>
         <li><a href="#kalender">Kalender</a></li>
-        <li><a href="#pasang">Pasang info</a></li>
+        <li><a href="#perusahaan">Perusahaan</a></li>
+        <li><a class="nav-cta" href="#pasang">Pasang info</a></li>
       </ul>
       
     </nav>
@@ -81,18 +81,60 @@
         </div>
       </aside>
       <div class="intro">
-        <h1>Magang, loker, dan event kampus dalam satu tempat</h1>
-        <p>Pilih tanggal di kalender atau <em>saring</em> lewat menu di bawah, urutkan sesuai kebutuhan, lalu tambahkan tanggalnya ke kalender di ponselmu.</p>
+        <span class="eyebrow">CAMPLY / CAMPUS CAREER NETWORK</span>
+        <h1>Temukan kesempatan terbaik melalui koneksi yang kamu percaya.</h1>
+        <p>Lowongan kerja, magang, dan event kampus terkurasi dalam satu tempat untuk membantu langkah kariermu dimulai.</p>
+        <div class="hero-actions">
+          <a class="tombol" href="#info">Jelajahi kesempatan</a>
+          <a class="hero-link" href="#kalender">Lihat kalender <span aria-hidden="true">→</span></a>
+        </div>
         <ol class="legenda">
-          <li><strong>Tanggal tebal</strong> berarti ada info. Klik untuk menyaring daftar di bawah.</li>
-          <li>Tanggal berlingkar adalah hari ini.</li>
-          <li>Pilih Semua tanggal untuk menampilkan semuanya lagi.</li>
+          <li><strong>Tanggal tebal</strong> berarti ada info dan dapat diklik untuk menyaring daftar.</li>
+          <li>Warna penanda membedakan loker, magang, dan event.</li>
         </ol>
       </div>
     </section>
 
+    <section id="perusahaan" class="perusahaan bungkus" aria-labelledby="judul-perusahaan">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">OPPORTUNITIES FROM</span>
+          <h2 id="judul-perusahaan">Perusahaan yang sedang mencari talenta</h2>
+        </div>
+        <a class="hero-link" href="#info">Lihat semua <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="perusahaan-grid">
+        <a class="perusahaan-card" href="#info">
+          <span class="logo-bulat logo-navy">G</span>
+          <span><strong>GoTo Group</strong><small>4 kesempatan tersedia</small></span>
+          <span class="jenis-pil jenis-loker">Loker</span>
+        </a>
+        <a class="perusahaan-card" href="#info">
+          <span class="logo-bulat logo-orange">S</span>
+          <span><strong>Shopee Indonesia</strong><small>3 kesempatan tersedia</small></span>
+          <span class="jenis-pil jenis-magang">Magang</span>
+        </a>
+        <a class="perusahaan-card" href="#info">
+          <span class="logo-bulat logo-purple">B</span>
+          <span><strong>Bank Jago</strong><small>2 kesempatan tersedia</small></span>
+          <span class="jenis-pil jenis-event">Event</span>
+        </a>
+        <a class="perusahaan-card" href="#info">
+          <span class="logo-bulat logo-blue">T</span>
+          <span><strong>Telkom Indonesia</strong><small>5 kesempatan tersedia</small></span>
+          <span class="jenis-pil jenis-magang">Magang</span>
+        </a>
+      </div>
+    </section>
+
     <section id="info" class="daftar bungkus">
-      <h2>Semua info</h2>
+      <div class="section-heading daftar-heading">
+        <div>
+          <span class="eyebrow">DISCOVER YOUR NEXT STEP</span>
+          <h2>Lowongan, event, dan magang</h2>
+        </div>
+        <p class="section-description">Pilih peluang yang paling sesuai dengan tujuanmu.</p>
+      </div>
       <div class="filter-bar">
         <div class="pilih">
           <label class="sr" for="f-jenis">Jenis info</label>
