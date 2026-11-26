@@ -15,6 +15,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import { useCommunityStore } from '../../store/useCommunityStore';
+import { useAuthStore } from '../../store/useAuthStore';
 import { RoleBadge } from '../../components/ui/RoleBadge';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
@@ -33,6 +34,7 @@ export const AlumniProfilePage: React.FC = () => {
     toggleFollow,
     sendMessageToMember
   } = useCommunityStore();
+  const currentUser = useAuthStore((state) => state.user);
 
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
   const [isMutualModalOpen, setIsMutualModalOpen] = useState(false);
@@ -58,19 +60,20 @@ export const AlumniProfilePage: React.FC = () => {
   const isConnected = connectedIds.includes(profile.id);
   const isPending = sentRequestIds.includes(profile.id);
   const isFollowing = followingIds.includes(profile.id);
+  const isOwnProfile = currentUser?.id === profile.id;
 
   const mutualMembers = members.filter((m) => m.id !== profile.id).slice(0, 4);
   const conversationMessages = messages.filter((m) => m.recipientId === profile.id);
 
   const handleConnect = () => {
-    if (isConnected || isPending) return;
+    if (isOwnProfile || isConnected || isPending) return;
     sendConnectionRequest(profile.id);
     confetti({ particleCount: 50, spread: 65, origin: { y: 0.6 } });
   };
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!messageText.trim()) return;
+    if (isOwnProfile || !messageText.trim()) return;
     sendMessageToMember(profile.id, messageText.trim());
     setMessageText('');
     setMessageSentNotice(true);
@@ -127,40 +130,49 @@ export const AlumniProfilePage: React.FC = () => {
 
             {/* Interactive Action Buttons */}
             <div className="flex flex-wrap items-center gap-2.5">
-              <Button
-                variant={isConnected ? 'secondary' : isPending ? 'outline' : 'primary'}
-                size="md"
-                onClick={handleConnect}
-                disabled={isConnected || isPending}
-                icon={
-                  isConnected ? (
-                    <Check className="w-4 h-4 text-[#16A36A]" />
-                  ) : isPending ? (
-                    <UserCheck className="w-4 h-4 text-[#7865F5]" />
-                  ) : (
-                    <UserPlus className="w-4 h-4" />
-                  )
-                }
-              >
-                {isConnected ? 'Connected' : isPending ? 'Request Sent' : 'Connect'}
-              </Button>
+              {isOwnProfile ? (
+                <span className="inline-flex h-10 items-center gap-1.5 rounded-full border border-[#EAEAEA] bg-[#F8F8F8] px-4 text-xs font-semibold text-neutral-600">
+                  <UserCheck className="w-4 h-4 text-[#16A36A]" />
+                  This is your profile
+                </span>
+              ) : (
+                <>
+                  <Button
+                    variant={isConnected ? 'secondary' : isPending ? 'outline' : 'primary'}
+                    size="md"
+                    onClick={handleConnect}
+                    disabled={isConnected || isPending}
+                    icon={
+                      isConnected ? (
+                        <Check className="w-4 h-4 text-[#16A36A]" />
+                      ) : isPending ? (
+                        <UserCheck className="w-4 h-4 text-[#7865F5]" />
+                      ) : (
+                        <UserPlus className="w-4 h-4" />
+                      )
+                    }
+                  >
+                    {isConnected ? 'Connected' : isPending ? 'Request Sent' : 'Connect'}
+                  </Button>
 
-              <Button
-                variant="secondary"
-                size="md"
-                onClick={() => setIsMessageModalOpen(true)}
-                icon={<MessageSquare className="w-4 h-4" />}
-              >
-                Message
-              </Button>
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    onClick={() => setIsMessageModalOpen(true)}
+                    icon={<MessageSquare className="w-4 h-4" />}
+                  >
+                    Message
+                  </Button>
 
-              <Button
-                variant={isFollowing ? 'accent' : 'outline'}
-                size="md"
-                onClick={() => toggleFollow(profile.id)}
-              >
-                {isFollowing ? 'Following ✓' : 'Follow'}
-              </Button>
+                  <Button
+                    variant={isFollowing ? 'accent' : 'outline'}
+                    size="md"
+                    onClick={() => toggleFollow(profile.id)}
+                  >
+                    {isFollowing ? 'Following ✓' : 'Follow'}
+                  </Button>
+                </>
+              )}
             </div>
           </div>
 
@@ -181,13 +193,15 @@ export const AlumniProfilePage: React.FC = () => {
                 {profile.location}
               </span>
             )}
-            <button
-              onClick={() => setIsMutualModalOpen(true)}
-              className="text-[#7865F5] font-semibold hover:underline flex items-center gap-1"
-            >
-              <Users className="w-3.5 h-3.5" />
-              <span>{profile.mutual_connections || 14} mutual connections</span>
-            </button>
+            {!isOwnProfile && (
+              <button
+                onClick={() => setIsMutualModalOpen(true)}
+                className="text-[#7865F5] font-semibold hover:underline flex items-center gap-1"
+              >
+                <Users className="w-3.5 h-3.5" />
+                <span>{profile.mutual_connections || 14} mutual connections</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -327,7 +341,7 @@ export const AlumniProfilePage: React.FC = () => {
           </div>
 
           {/* Mentorship Availability */}
-          {profile.is_mentor_available && (
+          {profile.is_mentor_available && !isOwnProfile && (
             <div className="bg-[#111111] text-white rounded-3xl p-6 shadow-sm">
               <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold mb-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
