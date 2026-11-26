@@ -1,151 +1,149 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Lock, User, AlertCircle, CheckCircle2, Sparkles } from 'lucide-react';
-import { PublicLoginRole } from '../authService';
+import { AlertCircle, CheckCircle2, Lock, User } from 'lucide-react';
+import { DEMO_LOGIN_ACCOUNTS } from '../authService';
 import { Button } from '../../../components/ui/Button';
 
 interface LoginFormProps {
-  role: PublicLoginRole;
   isLoading: boolean;
   error: string | null;
   successMessage: string | null;
   onSubmit: (identifier: string, password: string) => void;
 }
 
-const DEMO_HINTS: Record<PublicLoginRole, { label: string; identifier: string; password: string; placeholder: string }> = {
-  STUDENT: {
-    label: 'Student ID (NIM)',
-    identifier: '23100001',
-    password: 'student123',
-    placeholder: 'e.g. 23100001'
-  },
-  ALUMNI: {
-    label: 'Email or Alumni ID',
-    identifier: 'alumni@camply.demo',
-    password: 'alumni123',
-    placeholder: 'e.g. alumni@camply.demo'
-  },
-  LECTURER: {
-    label: 'Lecturer ID (NIDN / NIP)',
-    identifier: '0012345678',
-    password: 'lecturer123',
-    placeholder: 'e.g. 0012345678'
-  }
-};
+const publicDemoAccounts = DEMO_LOGIN_ACCOUNTS.filter((account) => account.role !== 'ADMIN');
 
 export const LoginForm: React.FC<LoginFormProps> = ({
-  role,
   isLoading,
   error,
   successMessage,
   onSubmit
 }) => {
-  const hint = DEMO_HINTS[role];
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
-  useEffect(() => {
-    setIdentifier('');
-    setPassword('');
-  }, [role]);
-
-  const handleFillDemo = () => {
-    setIdentifier(hint.identifier);
-    setPassword(hint.password);
+  const handleFillDemo = (account: (typeof DEMO_LOGIN_ACCOUNTS)[number]) => {
+    setIdentifier(account.identifier);
+    setPassword(account.password);
+    setSelectedAccount(account.role);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
     onSubmit(identifier, password);
   };
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* Prototype Demo Account Card */}
-      <div className="p-3.5 rounded-2xl bg-[#F8F8F8] dark:bg-[#20232B] border border-[#EAEAEA] dark:border-[#2C2F38] flex items-center justify-between gap-3">
-        <div className="text-xs">
-          <div className="font-bold text-[#111111] dark:text-[#F5F5F5] flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-[#7865F5]" />
-            <span>Demo {role.charAt(0) + role.slice(1).toLowerCase()} Account</span>
-          </div>
-          <p className="text-[11px] text-[#929292] mt-0.5 font-mono">
-            ID: {hint.identifier} • Pass: {hint.password}
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={handleFillDemo}
-          className="px-3 py-1.5 rounded-full bg-white dark:bg-[#181A20] border border-[#EAEAEA] dark:border-[#2C2F38] text-[11px] font-bold text-[#7865F5] hover:border-[#7865F5] transition-colors shrink-0"
-        >
-          Fill Demo
-        </button>
-      </div>
-
+    <div className="space-y-5">
       {error && (
-        <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0" />
+        <div role="alert" className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-3 text-sm leading-5 text-rose-700 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-300">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {successMessage && (
-        <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-300 text-xs flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
+        <div role="status" className="flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 px-3.5 py-3 text-sm leading-5 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300">
+          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
           <span>{successMessage}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
-            {hint.label}
+          <label htmlFor="login-identifier" className="mb-2 block text-sm font-medium text-[#242424] dark:text-[#E4E4E4]">
+            ID akun atau email institusi
           </label>
           <div className="relative">
-            <User className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" aria-hidden="true" />
             <input
+              id="login-identifier"
               type="text"
               required
+              autoComplete="username"
               value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              placeholder={hint.placeholder}
-              className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-[#EAEAEA] dark:border-[#2C2F38] focus:outline-none focus:border-[#7865F5]"
+              onChange={(event) => {
+                setIdentifier(event.target.value);
+                setSelectedAccount(null);
+              }}
+              placeholder="NIM, ID alumni, atau ID dosen"
+              className="w-full rounded-xl border border-[#DCDCDC] bg-white py-3 pl-10 pr-4 text-sm text-[#111111] outline-none transition-colors placeholder:text-neutral-400 focus:border-[#7865F5] focus:ring-3 focus:ring-[#7865F5]/15 dark:border-[#3A3D47] dark:bg-[#20232B] dark:text-[#F5F5F5]"
             />
           </div>
         </div>
 
         <div>
-          <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300">
-              Password
+          <div className="mb-2 flex items-center justify-between gap-4">
+            <label htmlFor="login-password" className="block text-sm font-medium text-[#242424] dark:text-[#E4E4E4]">
+              Kata sandi
             </label>
-            <Link to="/forgot-password" className="text-xs text-[#7865F5] font-semibold hover:underline">
-              Forgot?
+            <Link to="/forgot-password" className="text-sm font-medium text-[#7865F5] underline-offset-4 hover:text-[#6752EE] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7865F5]">
+              Lupa sandi?
             </Link>
           </div>
           <div className="relative">
-            <Lock className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" aria-hidden="true" />
             <input
+              id="login-password"
               type="password"
               required
+              autoComplete="current-password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-[#EAEAEA] dark:border-[#2C2F38] focus:outline-none focus:border-[#7865F5]"
+              onChange={(event) => {
+                setPassword(event.target.value);
+                setSelectedAccount(null);
+              }}
+              placeholder="Masukkan kata sandi"
+              className="w-full rounded-xl border border-[#DCDCDC] bg-white py-3 pl-10 pr-4 text-sm text-[#111111] outline-none transition-colors placeholder:text-neutral-400 focus:border-[#7865F5] focus:ring-3 focus:ring-[#7865F5]/15 dark:border-[#3A3D47] dark:bg-[#20232B] dark:text-[#F5F5F5]"
             />
           </div>
         </div>
 
         <Button
-          variant="primary"
+          variant="accent"
           size="lg"
           type="submit"
           isLoading={isLoading}
-          className="mt-1 w-full"
-          icon={<ArrowRight className="w-4 h-4" />}
+          className="mt-1 w-full rounded-xl"
         >
-          Login as {role.charAt(0) + role.slice(1).toLowerCase()}
+          Masuk
         </Button>
       </form>
+
+      <details className="border-t border-[#EAEAEA] pt-5 dark:border-[#2C2F38]">
+        <summary className="cursor-pointer text-sm font-medium text-[#4E4E4E] marker:text-[#7865F5] dark:text-[#C9C9C9]">
+          Gunakan akun demo
+        </summary>
+        <p className="mt-2 text-xs leading-5 text-[#777777] dark:text-[#A0A0A0]">
+          Pilih salah satu peran untuk mengisi kredensial secara otomatis.
+        </p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-3">
+          {publicDemoAccounts.map((account) => {
+            const isSelected = selectedAccount === account.role;
+
+            return (
+              <button
+                key={account.role}
+                type="button"
+                onClick={() => handleFillDemo(account)}
+                className={`rounded-lg border px-3 py-2.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7865F5] focus-visible:ring-offset-2 ${
+                  isSelected
+                    ? 'border-[#7865F5] bg-[#F5F3FF] dark:bg-[#282542]'
+                    : 'border-[#EAEAEA] bg-[#FAFAFA] hover:border-[#BDB4F9] hover:bg-[#F8F7FF] dark:border-[#2C2F38] dark:bg-[#20232B] dark:hover:border-[#5D5497]'
+                }`}
+              >
+                <span className="block text-xs font-semibold text-[#242424] dark:text-[#F5F5F5]">
+                  {account.label}
+                </span>
+                <span className="mt-1 block font-mono text-[10px] leading-4 text-[#777777] dark:text-[#A0A0A0]">
+                  {account.identifier}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </details>
     </div>
   );
 };

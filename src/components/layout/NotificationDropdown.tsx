@@ -1,7 +1,57 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, CheckCheck } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  Bell,
+  BellRing,
+  BriefcaseBusiness,
+  CalendarDays,
+  Check,
+  CheckCheck,
+  Handshake,
+  Inbox,
+  UserPlus
+} from 'lucide-react';
+import { NotificationItem } from '../../types';
 import { useCommunityStore } from '../../store/useCommunityStore';
+
+const notificationMeta: Record<NotificationItem['type'], {
+  label: string;
+  icon: React.ElementType;
+  iconClassName: string;
+}> = {
+  CONNECTION: {
+    label: 'Koneksi',
+    icon: UserPlus,
+    iconClassName: 'bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-300'
+  },
+  EVENT: {
+    label: 'Acara',
+    icon: CalendarDays,
+    iconClassName: 'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300'
+  },
+  JOB: {
+    label: 'Karier',
+    icon: BriefcaseBusiness,
+    iconClassName: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300'
+  },
+  MENTORSHIP: {
+    label: 'Mentoring',
+    icon: Handshake,
+    iconClassName: 'bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-300'
+  },
+  SYSTEM: {
+    label: 'Sistem',
+    icon: BellRing,
+    iconClassName: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300'
+  }
+};
+
+const getMessagePreview = (message: string, maxLength = 72) => {
+  const compactMessage = message.replace(/\s+/g, ' ').trim();
+  if (compactMessage.length <= maxLength) return compactMessage;
+  return `${compactMessage.slice(0, maxLength).trimEnd()}…`;
+};
 
 export const NotificationDropdown: React.FC = () => {
   const navigate = useNavigate();
@@ -9,77 +59,150 @@ export const NotificationDropdown: React.FC = () => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const unreadCount = notifications.filter((n) => !n.is_read).length;
+  const unreadCount = notifications.filter((notification) => !notification.is_read).length;
+  const unreadLabel = unreadCount > 9 ? '9+' : unreadCount;
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+    if (!open) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false);
     };
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [open]);
+
+  const handleNotificationClick = (notification: NotificationItem) => {
+    if (!notification.is_read) markNotificationRead(notification.id);
+    setOpen(false);
+    if (notification.link) navigate(notification.link);
+  };
 
   return (
     <div className="relative" ref={ref}>
       <button
-        onClick={() => setOpen(!open)}
-        aria-label="Notifications"
-        className="relative w-9 h-9 rounded-full bg-[#F8F8F8] dark:bg-[#20232B] border border-[#EAEAEA] dark:border-[#2C2F38] flex items-center justify-center text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:border-neutral-300 transition-colors"
+        type="button"
+        onClick={() => setOpen((isOpen) => !isOpen)}
+        aria-label={unreadCount > 0 ? `Notifikasi, ${unreadCount} belum dibaca` : 'Notifikasi'}
+        aria-expanded={open}
+        aria-controls="notification-popover"
+        aria-haspopup="dialog"
+        className={`relative flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-200 ${
+          open
+            ? 'border-[#7865F5]/40 bg-[#F1EEFF] text-[#6752EE] shadow-sm dark:bg-[#7865F5]/15 dark:text-[#B9AEFF]'
+            : 'border-[#EAEAEA] bg-[#F8F8F8] text-neutral-600 hover:border-neutral-300 hover:text-neutral-900 dark:border-[#2C2F38] dark:bg-[#20232B] dark:text-neutral-300 dark:hover:text-white'
+        }`}
       >
-        <Bell className="w-4 h-4" />
+        <Bell className="h-4 w-4" strokeWidth={open ? 2.25 : 2} />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#7865F5] text-white text-[9px] font-bold flex items-center justify-center border-2 border-white dark:border-[#181A20]">
-            {unreadCount}
+          <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full border-2 border-white bg-[#7865F5] px-0.5 text-[9px] font-bold leading-none text-white dark:border-[#181A20]">
+            {unreadLabel}
           </span>
         )}
       </button>
 
-      {open && (
-        <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-[#181A20] rounded-2xl shadow-2xl border border-[#EAEAEA] dark:border-[#2C2F38] p-3 z-50">
-          <div className="flex items-center justify-between px-2 pb-2.5 mb-2 border-b border-neutral-100 dark:border-[#2C2F38]">
-            <span className="font-bold text-xs text-[#111111] dark:text-[#F5F5F5]">
-              Notifications ({unreadCount} unread)
-            </span>
-            <button
-              onClick={markAllNotificationsRead}
-              className="text-[11px] font-semibold text-[#7865F5] hover:underline inline-flex items-center gap-1"
-            >
-              <CheckCheck className="w-3 h-3" />
-              Mark all read
-            </button>
-          </div>
-
-          <div className="flex flex-col gap-1.5 max-h-72 overflow-y-auto">
-            {notifications.map((n) => (
-              <button
-                key={n.id}
-                onClick={() => {
-                  markNotificationRead(n.id);
-                  setOpen(false);
-                  if (n.link) navigate(n.link);
-                }}
-                className={`text-left p-2.5 rounded-xl transition-colors flex flex-col gap-1 ${
-                  n.is_read
-                    ? 'bg-white dark:bg-[#181A20] hover:bg-neutral-50 dark:hover:bg-[#20232B]'
-                    : 'bg-purple-50/60 dark:bg-[#7865F5]/10 hover:bg-purple-50 dark:hover:bg-[#7865F5]/20'
-                }`}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-bold text-xs text-[#111111] dark:text-[#F5F5F5] line-clamp-1">
-                    {n.title}
-                  </span>
-                  <span className="text-[10px] text-[#929292] shrink-0">{n.created_at}</span>
-                </div>
-                <p className="text-[11px] text-neutral-500 dark:text-[#A0A0A0] line-clamp-2 leading-snug">
-                  {n.message}
+      <AnimatePresence>
+        {open && (
+          <motion.section
+            id="notification-popover"
+            role="dialog"
+            aria-label="Notifikasi"
+            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -4, scale: 0.98 }}
+            transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute right-0 z-50 mt-3 w-[384px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-[#EAEAEA] bg-white shadow-[0_18px_45px_-18px_rgba(15,23,42,0.28)] dark:border-[#2C2F38] dark:bg-[#181A20]"
+          >
+            <div className="flex items-center justify-between gap-4 border-b border-[#EAEAEA] px-4 py-3 dark:border-[#2C2F38]">
+              <div>
+                <h2 className="text-sm font-extrabold text-[#111111] dark:text-[#F5F5F5]">Notifikasi</h2>
+                <p className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+                  {unreadCount > 0
+                    ? `${unreadCount} aktivitas perlu perhatian`
+                    : 'Semua notifikasi sudah dibaca'}
                 </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={markAllNotificationsRead}
+                disabled={unreadCount === 0}
+                aria-label="Tandai semua notifikasi sebagai sudah dibaca"
+                className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-bold text-[#6752EE] transition-colors hover:bg-[#F1EEFF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7865F5] disabled:cursor-default disabled:text-neutral-400 disabled:hover:bg-transparent dark:text-[#B9AEFF] dark:hover:bg-[#7865F5]/10 dark:disabled:text-neutral-600"
+              >
+                <CheckCheck className="h-3.5 w-3.5" />
+                Tandai semua
               </button>
-            ))}
-          </div>
-        </div>
-      )}
+            </div>
+
+            {notifications.length > 0 ? (
+              <div className="max-h-[min(28rem,calc(100vh-9rem))] overflow-y-auto p-2">
+                {notifications.map((notification) => {
+                  const meta = notificationMeta[notification.type];
+                  const Icon = meta.icon;
+
+                  return (
+                    <button
+                      key={notification.id}
+                      type="button"
+                      onClick={() => handleNotificationClick(notification)}
+                      aria-label={`${notification.title}. Klik untuk melihat detail.`}
+                      className={`group relative flex w-full gap-3 rounded-xl px-3 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7865F5] focus-visible:ring-inset ${
+                        notification.is_read
+                          ? 'hover:bg-neutral-50 dark:hover:bg-[#20232B]'
+                          : 'bg-[#F8F7FF] hover:bg-[#F1EEFF] dark:bg-[#7865F5]/8 dark:hover:bg-[#7865F5]/14'
+                      }`}
+                    >
+                      <span className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${meta.iconClassName}`}>
+                        <Icon className="h-4 w-4" strokeWidth={2.1} />
+                      </span>
+
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
+                            {meta.label}
+                          </span>
+                          {!notification.is_read && (
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#7865F5]" aria-label="Belum dibaca" />
+                          )}
+                        </span>
+                        <span className="mt-0.5 block pr-1 text-xs font-bold leading-snug text-[#111111] dark:text-[#F5F5F5]">
+                          {notification.title}
+                        </span>
+                        <span className="mt-1 block line-clamp-1 pr-1 text-[11px] leading-[1.45] text-neutral-500 dark:text-neutral-400">
+                          {getMessagePreview(notification.message)}
+                        </span>
+                        <span className="mt-2 flex items-center gap-1.5 text-[10px] font-medium text-neutral-400 dark:text-neutral-500">
+                          <span>{notification.created_at}</span>
+                          {notification.is_read && <Check className="h-3 w-3" aria-label="Sudah dibaca" />}
+                        </span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center px-8 py-12 text-center">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F8F8F8] text-neutral-400 dark:bg-[#20232B] dark:text-neutral-500">
+                  <Inbox className="h-5 w-5" />
+                </span>
+                <h3 className="mt-3 text-sm font-bold text-[#111111] dark:text-[#F5F5F5]">Tidak ada notifikasi</h3>
+                <p className="mt-1 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+                  Aktivitas terbaru dari kampus akan muncul di sini.
+                </p>
+              </div>
+            )}
+          </motion.section>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Search,
   CalendarDays,
@@ -14,6 +14,7 @@ import { useCareerStore } from '../../store/useCareerStore';
 import { FACULTIES_DATA } from '../../data/mockData';
 import { RoleBadge } from '../ui/RoleBadge';
 import { Button } from '../ui/Button';
+import { CamplyMark } from '../ui/CamplyMark';
 import { Modal } from '../ui/Modal';
 import { ThemeToggle } from '../../features/theme/ThemeToggle';
 import { LogoSidebar } from '../../features/navigation/LogoSidebar';
@@ -22,6 +23,7 @@ import { UserProfileDropdown } from './UserProfileDropdown';
 
 export const Navbar: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, isAuthenticated } = useAuthStore();
   const { members } = useCommunityStore();
   const { events } = useEventStore();
@@ -30,6 +32,7 @@ export const Navbar: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [globalQuery, setGlobalQuery] = useState('');
+  const isAuthenticationPage = location.pathname === '/login' || location.pathname === '/register';
 
   const searchResults = useMemo(() => {
     const q = globalQuery.trim().toLowerCase();
@@ -78,45 +81,35 @@ export const Navbar: React.FC = () => {
     <>
       <header className="sticky top-0 z-40 w-full bg-white/85 dark:bg-[#181A20]/90 backdrop-blur-md border-b border-[#EAEAEA] dark:border-[#2C2F38] transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-4">
-          {/* LEFT: CAMPLY Logo Trigger for Sidebar */}
+          {/* LEFT: Brand mark trigger for Sidebar */}
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            className="flex items-center gap-3 group text-left rounded-2xl p-1 -ml-1 hover:bg-neutral-100/70 dark:hover:bg-[#20232B] transition-colors"
+            className="group -ml-1 flex items-center gap-2 rounded-xl p-1 transition-colors hover:bg-neutral-100/70 dark:hover:bg-[#20232B]"
             aria-label="Open CAMPLY navigation sidebar"
           >
-            <div className="w-10 h-10 rounded-2xl bg-[#111111] dark:bg-[#20232B] border border-transparent dark:border-[#2C2F38] flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
-              <svg className="w-5 h-5 text-[#7865F5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 19L12 5L20 19" />
-                <circle cx="4" cy="19" r="2" fill="#7865F5" />
-                <circle cx="12" cy="5" r="2" fill="#FFFFFF" />
-                <circle cx="20" cy="19" r="2" fill="#7865F5" />
-              </svg>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-extrabold text-xl tracking-tight text-[#111111] dark:text-[#F5F5F5] leading-none">
-                CAMPLY<span className="text-[#7865F5]">.</span>
-              </span>
-              <span className="text-[10px] uppercase tracking-wider text-[#929292] font-semibold mt-0.5">
-                CAMPUS ECOSYSTEM
-              </span>
-            </div>
+            <CamplyMark className="h-10 w-[53px] transition-transform duration-200 group-hover:scale-[1.04]" />
+            <span className="text-lg font-extrabold tracking-[0.12em] text-[#111111] dark:text-[#F5F5F5]">CAMPLY</span>
           </button>
 
           {/* RIGHT: Search, Notifications, Theme Toggle, User Profile / Login */}
           <div className="flex items-center gap-2 sm:gap-2.5">
-            {/* Search Button */}
-            <button
-              onClick={() => setSearchOpen(true)}
-              aria-label="Global Search"
-              className="flex items-center gap-2 px-3 py-2 rounded-full bg-[#F8F8F8] dark:bg-[#20232B] border border-[#EAEAEA] dark:border-[#2C2F38] text-neutral-500 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:border-neutral-300 transition-colors text-xs"
-            >
-              <Search className="w-3.5 h-3.5" />
-              <span className="hidden md:inline text-[#929292]">Search campus...</span>
-            </button>
+            {!isAuthenticationPage && (
+              <>
+                {/* Search Button */}
+                <button
+                  onClick={() => setSearchOpen(true)}
+                  aria-label="Global Search"
+                  className="flex items-center gap-2 px-3 py-2 rounded-full bg-[#F8F8F8] dark:bg-[#20232B] border border-[#EAEAEA] dark:border-[#2C2F38] text-neutral-500 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:border-neutral-300 transition-colors text-xs"
+                >
+                  <Search className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline text-[#929292]">Search campus...</span>
+                </button>
 
-            {/* Notifications */}
-            <NotificationDropdown />
+                {/* Notifications */}
+                <NotificationDropdown />
+              </>
+            )}
 
             {/* Theme Toggle */}
             <ThemeToggle />

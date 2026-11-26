@@ -1,17 +1,15 @@
 import { create } from 'zustand';
 import { Profile, UserRole } from '../types';
-import { authService, AuthResult, PublicLoginRole } from '../features/auth/authService';
+import { authService, AuthResult } from '../features/auth/authService';
 
 interface AuthState {
   user: Profile | null;
   isAuthenticated: boolean;
   activeRole: UserRole | null;
   loginWithCredentials: (params: {
-    role: PublicLoginRole;
     identifier: string;
     password: string;
   }) => Promise<AuthResult>;
-  loginAdmin: (username: string, password: string) => Promise<AuthResult>;
   register: (profileData: Partial<Profile>) => Promise<boolean>;
   logout: () => void;
   updateProfile: (updates: Partial<Profile>) => void;
@@ -45,21 +43,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: initial.isAuthenticated,
   activeRole: initial.activeRole,
 
-  loginWithCredentials: async ({ role, identifier, password }) => {
-    const res = await authService.authenticatePublicRole({ role, identifier, password });
-    if (res.success && res.user) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(res.user));
-      set({
-        user: res.user,
-        isAuthenticated: true,
-        activeRole: res.user.role
-      });
-    }
-    return res;
-  },
-
-  loginAdmin: async (username, password) => {
-    const res = await authService.authenticateAdmin(username, password);
+  loginWithCredentials: async ({ identifier, password }) => {
+    const res = await authService.authenticate({ identifier, password });
     if (res.success && res.user) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(res.user));
       set({
