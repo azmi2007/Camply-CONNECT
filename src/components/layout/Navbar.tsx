@@ -1,54 +1,91 @@
-import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  Search, 
-  Bell, 
-  Menu, 
-  X, 
-  ChevronDown, 
-  LayoutDashboard, 
-  LogOut, 
-  UserCheck, 
-  ShieldCheck, 
-  Sparkles,
-  CalendarDays
+import React, { useState, useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  Search,
+  CalendarDays,
+  Briefcase,
+  Users,
+  Building2
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useCommunityStore } from '../../store/useCommunityStore';
+import { useEventStore } from '../../store/useEventStore';
+import { useCareerStore } from '../../store/useCareerStore';
+import { FACULTIES_DATA } from '../../data/mockData';
 import { RoleBadge } from '../ui/RoleBadge';
 import { Button } from '../ui/Button';
-import { UserRole } from '../../types';
+import { Modal } from '../ui/Modal';
+import { ThemeToggle } from '../../features/theme/ThemeToggle';
+import { LogoSidebar } from '../../features/navigation/LogoSidebar';
+import { NotificationDropdown } from './NotificationDropdown';
+import { UserProfileDropdown } from './UserProfileDropdown';
 
 export const Navbar: React.FC = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAuthenticated, activeRole, logout, switchDemoRole } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
+  const { members } = useCommunityStore();
+  const { events } = useEventStore();
+  const { jobs } = useCareerStore();
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const [roleSwitcherOpen, setRoleSwitcherOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [globalQuery, setGlobalQuery] = useState('');
 
-  const navLinks = [
-    { label: 'Home', path: '/' },
-    { label: 'Community', path: '/community' },
-    { label: 'Events', path: '/events' },
-    { label: 'Careers', path: '/careers' },
-    { label: 'Alumni', path: '/alumni' },
-    { label: 'Mentorship', path: '/mentorship' }
-  ];
-
-  const handleRoleSwitch = (role: UserRole) => {
-    switchDemoRole(role);
-    setRoleSwitcherOpen(false);
-    setProfileDropdownOpen(false);
-  };
+  const searchResults = useMemo(() => {
+    const q = globalQuery.trim().toLowerCase();
+    if (!q) {
+      return {
+        members: members.slice(0, 3),
+        events: events.slice(0, 2),
+        jobs: jobs.slice(0, 2),
+        faculties: FACULTIES_DATA.slice(0, 2)
+      };
+    }
+    return {
+      members: members
+        .filter(
+          (m) =>
+            m.full_name.toLowerCase().includes(q) ||
+            (m.headline && m.headline.toLowerCase().includes(q)) ||
+            (m.faculty && m.faculty.toLowerCase().includes(q)) ||
+            (m.current_company && m.current_company.toLowerCase().includes(q))
+        )
+        .slice(0, 4),
+      events: events
+        .filter(
+          (ev) =>
+            ev.title.toLowerCase().includes(q) ||
+            ev.category.toLowerCase().includes(q) ||
+            ev.location.toLowerCase().includes(q)
+        )
+        .slice(0, 3),
+      jobs: jobs
+        .filter(
+          (j) =>
+            j.title.toLowerCase().includes(q) ||
+            j.company.name.toLowerCase().includes(q)
+        )
+        .slice(0, 3),
+      faculties: FACULTIES_DATA.filter(
+        (f) =>
+          f.name.toLowerCase().includes(q) ||
+          f.category_key.toLowerCase().includes(q)
+      ).slice(0, 3)
+    };
+  }, [globalQuery, members, events, jobs]);
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#F8F8F8]/80 backdrop-blur-md border-b border-[#EAEAEA] transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
-        {/* Left: Brand Logo */}
-        <div className="flex items-center gap-8">
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-2xl bg-[#111111] flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
+    <>
+      <header className="sticky top-0 z-40 w-full bg-white/85 dark:bg-[#181A20]/90 backdrop-blur-md border-b border-[#EAEAEA] dark:border-[#2C2F38] transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-4">
+          {/* LEFT: CAMPLY Logo Trigger for Sidebar */}
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(true)}
+            className="flex items-center gap-3 group text-left rounded-2xl p-1 -ml-1 hover:bg-neutral-100/70 dark:hover:bg-[#20232B] transition-colors"
+            aria-label="Open CAMPLY navigation sidebar"
+          >
+            <div className="w-10 h-10 rounded-2xl bg-[#111111] dark:bg-[#20232B] border border-transparent dark:border-[#2C2F38] flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
               <svg className="w-5 h-5 text-[#7865F5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 19L12 5L20 19" />
                 <circle cx="4" cy="19" r="2" fill="#7865F5" />
@@ -57,248 +94,192 @@ export const Navbar: React.FC = () => {
               </svg>
             </div>
             <div className="flex flex-col">
-              <span className="font-extrabold text-xl tracking-tight text-[#111111] leading-none">
+              <span className="font-extrabold text-xl tracking-tight text-[#111111] dark:text-[#F5F5F5] leading-none">
                 CAMPLY<span className="text-[#7865F5]">.</span>
               </span>
-              <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-semibold mt-0.5">
-                Campus Ecosystem
+              <span className="text-[10px] uppercase tracking-wider text-[#929292] font-semibold mt-0.5">
+                CAMPUS ECOSYSTEM
               </span>
             </div>
-          </Link>
+          </button>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => {
-              const isActive = location.pathname === link.path;
-              return (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                    isActive
-                      ? 'bg-white text-neutral-900 border border-neutral-200/80 shadow-xs'
-                      : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100/60'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Right Actions */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Demo Role Switcher Quick Pill */}
-          <div className="relative">
+          {/* RIGHT: Search, Notifications, Theme Toggle, User Profile / Login */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Search Button */}
             <button
-              onClick={() => setRoleSwitcherOpen(!roleSwitcherOpen)}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-neutral-200 text-xs font-medium text-neutral-700 hover:border-neutral-300 shadow-xs"
-              title="Click to quickly test other roles (Student, Alumni, Lecturer, Admin)"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Global Search"
+              className="flex items-center gap-2 px-3 py-2 rounded-full bg-[#F8F8F8] dark:bg-[#20232B] border border-[#EAEAEA] dark:border-[#2C2F38] text-neutral-500 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:border-neutral-300 transition-colors text-xs"
             >
-              <span className="text-neutral-400 text-[11px]">Role:</span>
-              <RoleBadge role={activeRole} size="sm" />
-              <ChevronDown className="w-3 h-3 text-neutral-400" />
+              <Search className="w-3.5 h-3.5" />
+              <span className="hidden md:inline text-[#929292]">Search campus...</span>
             </button>
 
-            {roleSwitcherOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-neutral-100 py-2 z-50 animate-in fade-in zoom-in-95">
-                <div className="px-3.5 py-1.5 text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
-                  Test Experience As:
-                </div>
-                {(['STUDENT', 'ALUMNI', 'LECTURER', 'ADMIN'] as UserRole[]).map((r) => (
-                  <button
-                    key={r}
-                    onClick={() => handleRoleSwitch(r)}
-                    className={`w-full px-3.5 py-2 text-left text-xs flex items-center justify-between hover:bg-neutral-50 transition-colors ${
-                      activeRole === r ? 'font-bold bg-neutral-50/80' : 'text-neutral-700'
-                    }`}
-                  >
-                    <RoleBadge role={r} size="sm" />
-                    {activeRole === r && <span className="text-[#7865F5] text-xs">Active</span>}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+            {/* Notifications */}
+            <NotificationDropdown />
 
-          {/* Quick Dashboard link */}
-          {isAuthenticated && (
-            <Link
-              to="/dashboard"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-neutral-200 text-neutral-800 hover:border-neutral-300 shadow-xs transition-colors"
-            >
-              <LayoutDashboard className="w-3.5 h-3.5 text-neutral-500" />
-              <span>Dashboard</span>
-            </Link>
-          )}
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
-          {/* User profile or Auth buttons */}
-          {isAuthenticated && user ? (
-            <div className="relative">
-              <button
-                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="flex items-center gap-2 p-1 rounded-full border border-neutral-200 hover:border-neutral-300 transition-colors bg-white shadow-xs"
-                aria-label="User profile menu"
-              >
-                <img
-                  src={user.avatar_url}
-                  alt={user.full_name}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-                <ChevronDown className="w-3 h-3 text-neutral-400 pr-1" />
-              </button>
-
-              {profileDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-neutral-100 p-3 z-50">
-                  <div className="flex items-center gap-3 p-2 border-b border-neutral-100 pb-3 mb-2">
-                    <img
-                      src={user.avatar_url}
-                      alt={user.full_name}
-                      className="w-10 h-10 rounded-xl object-cover"
-                    />
-                    <div className="overflow-hidden">
-                      <h5 className="font-bold text-neutral-900 text-xs truncate">
-                        {user.full_name}
-                      </h5>
-                      <p className="text-[11px] text-neutral-400 truncate">{user.email}</p>
-                      <RoleBadge role={user.role} size="sm" className="mt-1" />
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-1 text-xs">
-                    <Link
-                      to="/dashboard"
-                      onClick={() => setProfileDropdownOpen(false)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-xl text-neutral-700 hover:bg-neutral-50 transition-colors"
-                    >
-                      <LayoutDashboard className="w-4 h-4 text-neutral-400" />
-                      <span>Role Dashboard</span>
-                    </Link>
-
-                    <button
-                      onClick={() => {
-                        setProfileDropdownOpen(false);
-                        setRoleSwitcherOpen(true);
-                      }}
-                      className="flex items-center justify-between px-3 py-2 rounded-xl text-neutral-700 hover:bg-neutral-50 transition-colors w-full text-left"
-                    >
-                      <span className="flex items-center gap-2">
-                        <UserCheck className="w-4 h-4 text-neutral-400" />
-                        <span>Switch Role Demo</span>
-                      </span>
-                      <RoleBadge role={activeRole} size="sm" showDot={false} />
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        logout();
-                        setProfileDropdownOpen(false);
-                        navigate('/login');
-                      }}
-                      className="flex items-center gap-2 px-3 py-2 rounded-xl text-rose-600 hover:bg-rose-50 transition-colors w-full text-left font-medium mt-1 border-t border-neutral-100 pt-2"
-                    >
-                      <LogOut className="w-4 h-4 text-rose-500" />
-                      <span>Sign Out</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Link to="/login">
-                <Button variant="ghost" size="sm">
-                  Log in
-                </Button>
-              </Link>
-              <Link to="/register">
-                <Button variant="primary" size="sm">
-                  Get Started
-                </Button>
-              </Link>
-            </div>
-          )}
-
-          {/* Mobile hamburger menu toggle */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-xl text-neutral-700 hover:bg-neutral-100"
-            aria-label="Toggle navigation menu"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Menu Drawer */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-b border-neutral-200 px-4 pt-3 pb-6 flex flex-col gap-3 shadow-lg">
-          <div className="flex flex-col gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`px-3 py-2 rounded-xl text-sm font-semibold ${
-                  location.pathname === link.path
-                    ? 'bg-[#111111] text-white'
-                    : 'text-neutral-700 hover:bg-neutral-50'
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-
-          <div className="pt-3 border-t border-neutral-100 flex flex-col gap-2">
-            <div className="text-xs font-semibold text-neutral-400 px-3">Switch Demo Role:</div>
-            <div className="grid grid-cols-2 gap-1.5 px-2">
-              {(['STUDENT', 'ALUMNI', 'LECTURER', 'ADMIN'] as UserRole[]).map((r) => (
-                <button
-                  key={r}
-                  onClick={() => {
-                    handleRoleSwitch(r);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`px-3 py-2 rounded-xl text-xs flex items-center justify-between border ${
-                    activeRole === r
-                      ? 'border-[#7865F5] bg-purple-50/50'
-                      : 'border-neutral-200 bg-white'
-                  }`}
-                >
-                  <RoleBadge role={r} size="sm" showDot={false} />
-                  {activeRole === r && <span className="text-[10px] text-[#7865F5]">✓</span>}
-                </button>
-              ))}
-            </div>
-
-            {isAuthenticated ? (
-              <Link
-                to="/dashboard"
-                onClick={() => setMobileMenuOpen(false)}
-                className="mt-2 w-full text-center py-2.5 rounded-full bg-[#111111] text-white text-xs font-semibold"
-              >
-                Go to Role Dashboard
-              </Link>
+            {/* User Profile or Auth CTAs */}
+            {isAuthenticated && user ? (
+              <UserProfileDropdown />
             ) : (
-              <div className="flex items-center gap-2 pt-2">
-                <Link to="/login" className="flex-1" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="secondary" size="md" className="w-full">
-                    Log in
+              <div className="flex items-center gap-2">
+                <Link to="/login">
+                  <Button variant="ghost" size="sm">
+                    Login
                   </Button>
                 </Link>
-                <Link to="/register" className="flex-1" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="primary" size="md" className="w-full">
-                    Get Started
+                <Link to="/register" className="hidden sm:inline-block">
+                  <Button variant="primary" size="sm">
+                    Join CAMPLY
                   </Button>
                 </Link>
               </div>
             )}
           </div>
         </div>
-      )}
-    </header>
+      </header>
+
+      {/* Logo-Triggered Navigation Sidebar */}
+      <LogoSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
+      {/* Global Campus Search Modal */}
+      <Modal
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        title="Search CAMPLY Ecosystem"
+        description="Find students, alumni, campus events, career openings, or faculties."
+        maxWidth="lg"
+      >
+        <div className="flex flex-col gap-5">
+          <div className="relative">
+            <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              autoFocus
+              value={globalQuery}
+              onChange={(e) => setGlobalQuery(e.target.value)}
+              placeholder="Type a name, company (Stripe, Google), event, or faculty..."
+              className="w-full text-sm pl-10 pr-4 py-3 rounded-xl border border-[#EAEAEA] dark:border-[#2C2F38] focus:outline-none focus:border-[#7865F5] bg-[#F8F8F8] dark:bg-[#20232B]"
+            />
+          </div>
+
+          <div className="flex flex-col gap-4 max-h-96 overflow-y-auto">
+            {searchResults.members.length > 0 && (
+              <div>
+                <h5 className="text-[11px] font-bold uppercase tracking-wider text-[#929292] mb-2 flex items-center gap-1.5">
+                  <Users className="w-3.5 h-3.5" /> People & Alumni
+                </h5>
+                <div className="flex flex-col gap-1.5">
+                  {searchResults.members.map((m) => (
+                    <button
+                      key={m.id}
+                      onClick={() => {
+                        setSearchOpen(false);
+                        navigate(m.role === 'ALUMNI' ? `/alumni/${m.id}` : `/profile/${m.id}`);
+                      }}
+                      className="flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-50 dark:hover:bg-[#20232B] border border-transparent hover:border-[#EAEAEA] dark:hover:border-[#2C2F38] transition-all text-left"
+                    >
+                      <div className="flex items-center gap-3">
+                        <img src={m.avatar_url} alt={m.full_name} className="w-8 h-8 rounded-xl object-cover" />
+                        <div>
+                          <div className="text-xs font-bold text-[#111111] dark:text-[#F5F5F5]">{m.full_name}</div>
+                          <div className="text-[11px] text-[#929292]">{m.headline}</div>
+                        </div>
+                      </div>
+                      <RoleBadge role={m.role} size="sm" showDot={false} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {searchResults.events.length > 0 && (
+              <div>
+                <h5 className="text-[11px] font-bold uppercase tracking-wider text-[#929292] mb-2 flex items-center gap-1.5">
+                  <CalendarDays className="w-3.5 h-3.5" /> Campus Events
+                </h5>
+                <div className="flex flex-col gap-1.5">
+                  {searchResults.events.map((ev) => (
+                    <button
+                      key={ev.id}
+                      onClick={() => {
+                        setSearchOpen(false);
+                        navigate(`/events/${ev.id}`);
+                      }}
+                      className="flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-50 dark:hover:bg-[#20232B] border border-transparent hover:border-[#EAEAEA] dark:hover:border-[#2C2F38] transition-all text-left"
+                    >
+                      <div>
+                        <div className="text-xs font-bold text-[#111111] dark:text-[#F5F5F5]">{ev.title}</div>
+                        <div className="text-[11px] text-[#929292]">{ev.event_date} • {ev.location}</div>
+                      </div>
+                      <span className="text-[10px] font-semibold bg-neutral-100 dark:bg-[#20232B] px-2 py-0.5 rounded-full text-neutral-700 dark:text-neutral-300">
+                        {ev.category}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {searchResults.jobs.length > 0 && (
+              <div>
+                <h5 className="text-[11px] font-bold uppercase tracking-wider text-[#929292] mb-2 flex items-center gap-1.5">
+                  <Briefcase className="w-3.5 h-3.5" /> Career Opportunities
+                </h5>
+                <div className="flex flex-col gap-1.5">
+                  {searchResults.jobs.map((j) => (
+                    <button
+                      key={j.id}
+                      onClick={() => {
+                        setSearchOpen(false);
+                        navigate('/careers');
+                      }}
+                      className="flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-50 dark:hover:bg-[#20232B] border border-transparent hover:border-[#EAEAEA] dark:hover:border-[#2C2F38] transition-all text-left"
+                    >
+                      <div>
+                        <div className="text-xs font-bold text-[#111111] dark:text-[#F5F5F5]">{j.title}</div>
+                        <div className="text-[11px] text-[#929292]">{j.company.name} • {j.location}</div>
+                      </div>
+                      <span className="text-[10px] font-semibold bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full">
+                        {j.employment_type}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {searchResults.faculties.length > 0 && (
+              <div>
+                <h5 className="text-[11px] font-bold uppercase tracking-wider text-[#929292] mb-2 flex items-center gap-1.5">
+                  <Building2 className="w-3.5 h-3.5" /> Faculties & Fields
+                </h5>
+                <div className="flex flex-col gap-1.5">
+                  {searchResults.faculties.map((f) => (
+                    <button
+                      key={f.id}
+                      onClick={() => {
+                        setSearchOpen(false);
+                        navigate(`/faculties?selected=${encodeURIComponent(f.category_key)}`);
+                      }}
+                      className="flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-50 dark:hover:bg-[#20232B] border border-transparent hover:border-[#EAEAEA] dark:hover:border-[#2C2F38] transition-all text-left"
+                    >
+                      <div>
+                        <div className="text-xs font-bold text-[#111111] dark:text-[#F5F5F5]">{f.name}</div>
+                        <div className="text-[11px] text-[#929292]">{f.member_count.toLocaleString()} members • {f.alumni_count} alumni</div>
+                      </div>
+                      <span className="text-[11px] font-semibold text-[#7865F5]">Explore →</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </Modal>
+    </>
   );
 };
-

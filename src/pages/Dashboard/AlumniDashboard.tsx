@@ -35,7 +35,7 @@ export const AlumniDashboard: React.FC = () => {
   const myJobs = jobs.filter((j) => j.poster_id === user?.id || j.employment_type === 'Internship');
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-8">
       {/* Top Banner */}
       <div className="bg-white rounded-3xl border border-[#EAEAEA] p-6 sm:p-8 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
@@ -78,6 +78,14 @@ export const AlumniDashboard: React.FC = () => {
       </div>
 
       {/* Metrics Row */}
+      <div className="flex items-center justify-between -mb-4">
+        <span className="text-xs font-bold uppercase tracking-wider text-[#929292]">
+          Impact Overview
+        </span>
+        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-500">
+          Read Only
+        </span>
+      </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         <div className="bg-white p-5 rounded-2xl border border-neutral-200/80 shadow-2xs">
           <div className="flex items-center justify-between mb-2">
@@ -124,6 +132,9 @@ export const AlumniDashboard: React.FC = () => {
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-[#7865F5]" />
               <h3 className="font-bold text-neutral-900 text-base">Student Mentorship Inquiries</h3>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-50 text-[#7865F5]">
+                Manage
+              </span>
             </div>
             <span className="text-xs text-neutral-400 font-medium">Pending Review</span>
           </div>
@@ -168,6 +179,9 @@ export const AlumniDashboard: React.FC = () => {
             <div className="flex items-center gap-2">
               <Briefcase className="w-4 h-4 text-amber-500" />
               <h3 className="font-bold text-neutral-900 text-base">Your Published Vacancies</h3>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-50 text-[#7865F5]">
+                Manage
+              </span>
             </div>
             <button
               onClick={() => setIsJobModalOpen(true)}

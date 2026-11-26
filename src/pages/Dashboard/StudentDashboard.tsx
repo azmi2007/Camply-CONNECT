@@ -30,7 +30,7 @@ export const StudentDashboard: React.FC = () => {
   const recommendedMentors = members.filter((m) => m.is_mentor_available).slice(0, 2);
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-8">
       {/* Top Welcome Banner */}
       <div className="bg-white rounded-3xl border border-[#EAEAEA] p-6 sm:p-8 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
@@ -77,6 +77,9 @@ export const StudentDashboard: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[#7865F5]" />
                 <h3 className="font-bold text-neutral-900 text-base">Your Registered Events</h3>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-500">
+                  Read Only
+                </span>
               </div>
               <Link to="/events" className="text-xs font-semibold text-[#7865F5] hover:underline">
                 Browse More
@@ -118,6 +121,9 @@ export const StudentDashboard: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Briefcase className="w-4 h-4 text-amber-500" />
                 <h3 className="font-bold text-neutral-900 text-base">Recommended Internships</h3>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-500">
+                  Read Only
+                </span>
               </div>
               <Link to="/careers" className="text-xs font-semibold text-[#7865F5] hover:underline">
                 View All Vacancies

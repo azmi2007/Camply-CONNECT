@@ -6,14 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CAMPLY — Your Campus. Your People. Your Future.</title>
     <meta name="description" content="A premium university digital ecosystem connecting students, alumni, lecturers, and partners through networking, events, careers, and mentorship." />
+    <!-- Prevent theme flash before React mounts -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('camply_theme');
+          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (saved === 'dark' || (!saved && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   </head>
-  <body class="bg-[#F8F8F8] text-[#111111] antialiased selection:bg-[#7865F5]/20 selection:text-[#111111]">
+  <body class="antialiased selection:bg-[#7865F5]/20">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

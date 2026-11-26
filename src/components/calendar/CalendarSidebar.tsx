@@ -1,19 +1,30 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Calendar as CalendarIcon, 
-  Clock, 
-  MapPin, 
-  Plus, 
-  Filter, 
-  CheckCircle2,
-  Sparkles
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar as CalendarIcon,
+  Clock,
+  MapPin,
+  Plus,
+  Sparkles,
+  ArrowUpRight
 } from 'lucide-react';
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  getDay,
+  addMonths,
+  subMonths,
+  isSameDay,
+  parseISO
+} from 'date-fns';
 import { useEventStore } from '../../store/useEventStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { EventCategory, EventItem } from '../../types';
-import { cn, formatDate } from '../../lib/utils';
+import { cn } from '../../lib/utils';
 import { Button } from '../ui/Button';
 import confetti from 'canvas-confetti';
 
@@ -26,11 +37,12 @@ export const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
   onOpenCreateEvent,
   onSelectEvent
 }) => {
-  const { 
-    events, 
-    selectedDate, 
-    setSelectedDate, 
-    selectedCategory, 
+  const navigate = useNavigate();
+  const {
+    events,
+    selectedDate,
+    setSelectedDate,
+    selectedCategory,
     setSelectedCategory,
     registerEvent,
     cancelRegistration
@@ -38,46 +50,35 @@ export const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
 
   const { user } = useAuthStore();
 
-  // Current view date in calendar (defaults to November 2026 based on mock dataset & local time)
-  const [currentMonth, setCurrentMonth] = useState(new Date(2026, 10, 1)); // Nov 2026
+  // Anchored on Nov 2026 (matches current mock events & local time)
+  const todayDate = useMemo(() => new Date(2026, 10, 26), []);
+  const [currentMonth, setCurrentMonth] = useState(startOfMonth(todayDate));
 
-  // Categories for the calendar filter
   const filterCategories: EventCategory[] = [
     'All Events',
-    'Seminar',
+    'Academic',
     'Workshop',
-    'Career Fair',
+    'Seminar',
     'Networking',
+    'Career Fair',
     'Competition'
   ];
 
-  // Helper calculations for calendar grid
-  const year = currentMonth.getFullYear();
-  const month = currentMonth.getMonth();
+  const firstDayOffset = getDay(startOfMonth(currentMonth));
+  const daysInMonth = eachDayOfInterval({
+    start: startOfMonth(currentMonth),
+    end: endOfMonth(currentMonth)
+  });
 
-  const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
-
-  const firstDayIndex = new Date(year, month, 1).getDay(); // 0 is Sunday
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  // Prev month navigation
-  const prevMonth = () => {
-    setCurrentMonth(new Date(year, month - 1, 1));
+  const handleToday = () => {
+    setCurrentMonth(startOfMonth(todayDate));
+    setSelectedDate(format(todayDate, 'yyyy-MM-dd'));
   };
 
-  // Next month navigation
-  const nextMonth = () => {
-    setCurrentMonth(new Date(year, month + 1, 1));
-  };
-
-  // Map events to dates (key format: YYYY-MM-DD)
+  // Map events to dates (YYYY-MM-DD)
   const eventsByDate = useMemo(() => {
     const map = new Map<string, EventItem[]>();
     events.forEach((event) => {
-      // Filter by category if one is active
       if (selectedCategory !== 'All Events' && event.category !== selectedCategory) {
         return;
       }
@@ -87,24 +88,20 @@ export const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
     return map;
   }, [events, selectedCategory]);
 
-  // Selected or upcoming events list
+  // Selected day events or upcoming
   const displayedEvents = useMemo(() => {
+    const filtered = events.filter(
+      (e) => selectedCategory === 'All Events' || e.category === selectedCategory
+    );
     if (selectedDate) {
-      return events.filter((e) => {
-        const matchesDate = e.event_date === selectedDate;
-        const matchesCat = selectedCategory === 'All Events' || e.category === selectedCategory;
-        return matchesDate && matchesCat;
-      });
+      return filtered.filter((e) => e.event_date === selectedDate);
     }
-    // If no date is specifically selected, show upcoming 3 events
-    return events
-      .filter((e) => selectedCategory === 'All Events' || e.category === selectedCategory)
-      .slice(0, 3);
+    return filtered.filter((e) => e.status === 'UPCOMING').slice(0, 4);
   }, [events, selectedDate, selectedCategory]);
 
   const handleDateClick = (dayString: string) => {
     if (selectedDate === dayString) {
-      setSelectedDate(null); // toggle off
+      setSelectedDate(null);
     } else {
       setSelectedDate(dayString);
     }
@@ -126,52 +123,59 @@ export const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
 
   const getCategoryColor = (cat: string) => {
     switch (cat) {
+      case 'Academic': return 'bg-sky-500';
       case 'Seminar': return 'bg-indigo-500';
       case 'Workshop': return 'bg-[#7865F5]';
       case 'Career Fair': return 'bg-amber-500';
-      case 'Networking': return 'bg-emerald-500';
+      case 'Networking': return 'bg-[#16A36A]';
       case 'Competition': return 'bg-rose-500';
-      default: return 'bg-neutral-800';
+      default: return 'bg-[#111111]';
     }
   };
 
   return (
-    <aside className="sticky top-24 w-full flex flex-col gap-5">
+    <aside className="sticky top-24 w-full flex flex-col gap-5" aria-label="Interactive Campus Calendar">
       {/* Main Calendar Card */}
-      <div className="bg-white rounded-3xl border border-[#EAEAEA] p-5 sm:p-6 shadow-sm shadow-neutral-100/60">
+      <div className="bg-white rounded-3xl border border-[#EAEAEA] p-5 sm:p-6 shadow-sm">
         {/* Calendar Header */}
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-800">
-              <CalendarIcon className="w-4 h-4" />
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-[#F8F8F8] border border-[#EAEAEA] flex items-center justify-center text-[#111111]">
+              <CalendarIcon className="w-4 h-4 text-[#7865F5]" />
             </div>
             <div>
-              <h3 className="font-bold text-neutral-900 text-base leading-tight">
-                {monthNames[month]} {year}
+              <h3 className="font-bold text-[#111111] text-base leading-tight">
+                {format(currentMonth, 'MMMM yyyy')}
               </h3>
-              <p className="text-xs text-neutral-400">Campus Schedule</p>
+              <p className="text-[11px] text-[#929292]">Interactive Campus Schedule</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <button
-              onClick={prevMonth}
+              onClick={handleToday}
+              className="px-2.5 py-1 rounded-lg border border-[#EAEAEA] text-[11px] font-semibold text-neutral-700 hover:bg-[#F8F8F8] transition-colors"
+            >
+              Today
+            </button>
+            <button
+              onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
               aria-label="Previous month"
-              className="p-1.5 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-100 transition-colors"
+              className="p-1.5 rounded-lg border border-[#EAEAEA] text-neutral-600 hover:bg-[#F8F8F8] transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
-              onClick={nextMonth}
+              onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
               aria-label="Next month"
-              className="p-1.5 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-100 transition-colors"
+              className="p-1.5 rounded-lg border border-[#EAEAEA] text-neutral-600 hover:bg-[#F8F8F8] transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Quick Category Filter Pills */}
+        {/* Category Filter Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-3 mb-3 border-b border-neutral-100">
           {filterCategories.map((cat) => {
             const isActive = selectedCategory === cat;
@@ -180,10 +184,10 @@ export const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
                 className={cn(
-                  'text-[11px] font-medium px-2.5 py-1 rounded-full whitespace-nowrap transition-all duration-200 shrink-0',
+                  'text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap transition-all duration-200 shrink-0',
                   isActive
-                    ? 'bg-[#111111] text-white shadow-sm'
-                    : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200/80 hover:text-neutral-900'
+                    ? 'bg-[#111111] text-white shadow-xs'
+                    : 'bg-[#F8F8F8] text-neutral-600 hover:bg-neutral-200/80 hover:text-neutral-900'
                 )}
               >
                 {cat}
@@ -192,8 +196,8 @@ export const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
           })}
         </div>
 
-        {/* Calendar Day Labels */}
-        <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold text-neutral-400 mb-2">
+        {/* Day Labels */}
+        <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold text-[#929292] mb-2">
           <span>Su</span>
           <span>Mo</span>
           <span>Tu</span>
@@ -205,37 +209,33 @@ export const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
 
         {/* Calendar Grid */}
         <div className="grid grid-cols-7 gap-1">
-          {/* Empty cells before month starts */}
-          {Array.from({ length: firstDayIndex }).map((_, i) => (
+          {Array.from({ length: firstDayOffset }).map((_, i) => (
             <div key={`empty-${i}`} className="h-9 w-full" />
           ))}
 
-          {/* Month Days */}
-          {Array.from({ length: daysInMonth }).map((_, i) => {
-            const dayNum = i + 1;
-            const dayString = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+          {daysInMonth.map((dayObj) => {
+            const dayString = format(dayObj, 'yyyy-MM-dd');
             const dayEvents = eventsByDate.get(dayString) || [];
             const hasEvents = dayEvents.length > 0;
             const isSelected = selectedDate === dayString;
-            // Check if today (Nov 13, 2026 or current system date)
-            const isToday = dayNum === 13 && month === 10 && year === 2026;
+            const isToday = isSameDay(dayObj, todayDate);
 
             return (
               <button
                 key={dayString}
                 onClick={() => handleDateClick(dayString)}
+                title={hasEvents ? `${dayEvents.length} event(s)` : undefined}
                 className={cn(
-                  'h-9 w-full rounded-xl flex flex-col items-center justify-center relative text-xs font-medium transition-all group',
+                  'h-9 w-full rounded-xl flex flex-col items-center justify-center relative text-xs font-medium transition-all',
                   isSelected
                     ? 'bg-[#111111] text-white shadow-md'
                     : isToday
-                    ? 'bg-neutral-100 text-[#7865F5] font-bold border border-[#7865F5]/30'
-                    : 'text-neutral-700 hover:bg-neutral-100'
+                    ? 'bg-purple-50 text-[#7865F5] font-bold border border-[#7865F5]/40'
+                    : 'text-neutral-700 hover:bg-[#F8F8F8]'
                 )}
               >
-                <span>{dayNum}</span>
+                <span>{format(dayObj, 'd')}</span>
 
-                {/* Event Indicator Dots */}
                 {hasEvents && (
                   <div className="flex items-center gap-0.5 absolute bottom-1">
                     {dayEvents.slice(0, 3).map((ev, idx) => (
@@ -254,25 +254,34 @@ export const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
           })}
         </div>
 
-        {/* Calendar Footer / Reset date filter */}
+        {/* Calendar Footer */}
         <div className="flex items-center justify-between pt-4 mt-3 border-t border-neutral-100 text-xs">
-          <span className="text-neutral-500">
+          <div className="text-neutral-500">
             {selectedDate ? (
-              <span className="font-medium text-neutral-800">
-                Filtered: {formatDate(selectedDate)}
+              <span className="font-semibold text-[#111111]">
+                {format(parseISO(selectedDate), 'MMM d, yyyy')} ({displayedEvents.length} event{displayedEvents.length === 1 ? '' : 's'})
               </span>
             ) : (
-              'Upcoming Highlights'
+              <span>Showing upcoming events</span>
             )}
-          </span>
-          {selectedDate && (
-            <button
-              onClick={() => setSelectedDate(null)}
-              className="text-[#7865F5] hover:underline font-semibold"
+          </div>
+          <div className="flex items-center gap-3">
+            {selectedDate && (
+              <button
+                onClick={() => setSelectedDate(null)}
+                className="text-[#7865F5] hover:underline font-semibold"
+              >
+                Clear
+              </button>
+            )}
+            <Link
+              to="/calendar"
+              className="text-[#111111] hover:text-[#7865F5] font-bold inline-flex items-center gap-0.5"
             >
-              Show all
-            </button>
-          )}
+              <span>Full View</span>
+              <ArrowUpRight className="w-3 h-3" />
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -280,68 +289,77 @@ export const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
       <div className="bg-white rounded-3xl border border-[#EAEAEA] p-5 sm:p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <h4 className="font-bold text-neutral-900 text-sm">
-              {selectedDate ? `Events for ${formatDate(selectedDate)}` : 'Upcoming Campus Schedule'}
+            <h4 className="font-bold text-[#111111] text-sm">
+              {selectedDate
+                ? `Schedule for ${format(parseISO(selectedDate), 'MMM d')}`
+                : 'Upcoming Campus Schedule'}
             </h4>
-            <span className="text-xs bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded-full font-medium">
+            <span className="text-xs bg-[#F8F8F8] border border-[#EAEAEA] text-neutral-700 px-2 py-0.5 rounded-full font-semibold">
               {displayedEvents.length}
             </span>
           </div>
 
-          {/* Quick Create Event Button */}
-          {user && (
+          {user && onOpenCreateEvent && (
             <button
               onClick={onOpenCreateEvent}
               className="text-xs font-semibold text-[#7865F5] hover:text-[#6752EE] inline-flex items-center gap-1 p-1 rounded-lg hover:bg-purple-50 transition-colors"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Post Event</span>
+              <span>Add Event</span>
             </button>
           )}
         </div>
 
         {displayedEvents.length === 0 ? (
           <div className="py-8 text-center">
-            <p className="text-xs text-neutral-400">No events scheduled for this day.</p>
-            {user && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onOpenCreateEvent}
-                className="mt-3 text-xs"
-                icon={<Plus className="w-3.5 h-3.5" />}
-              >
-                Host an Event
-              </Button>
-            )}
+            <p className="text-xs text-[#929292]">No events scheduled for this date.</p>
+            <div className="flex items-center justify-center gap-2 mt-3">
+              {selectedDate && (
+                <Button variant="secondary" size="sm" onClick={() => setSelectedDate(null)}>
+                  View All Events
+                </Button>
+              )}
+              {user && onOpenCreateEvent && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onOpenCreateEvent}
+                  icon={<Plus className="w-3.5 h-3.5" />}
+                >
+                  Host Event
+                </Button>
+              )}
+            </div>
           </div>
         ) : (
           <div className="flex flex-col gap-3">
             {displayedEvents.map((event) => (
               <div
                 key={event.id}
-                onClick={() => onSelectEvent?.(event)}
-                className="p-3.5 rounded-2xl border border-neutral-100 hover:border-neutral-300 hover:bg-neutral-50/70 transition-all cursor-pointer group"
+                onClick={() => (onSelectEvent ? onSelectEvent(event) : navigate(`/events/${event.id}`))}
+                className="p-3.5 rounded-2xl border border-[#EAEAEA] hover:border-neutral-300 hover:bg-[#F8F8F8]/70 transition-all cursor-pointer group"
               >
                 <div className="flex items-start justify-between gap-2 mb-1.5">
-                  <span className={cn(
-                    'text-[10px] font-bold px-2 py-0.5 rounded-md text-white',
-                    getCategoryColor(event.category)
-                  )}>
+                  <span
+                    className={cn(
+                      'text-[10px] font-bold px-2 py-0.5 rounded-md text-white',
+                      getCategoryColor(event.category)
+                    )}
+                  >
                     {event.category}
                   </span>
                   <span className="text-[11px] text-neutral-500 font-medium flex items-center gap-1">
                     <Clock className="w-3 h-3 text-neutral-400" />
-                    {event.start_time}
+                    {format(parseISO(event.event_date), 'MMM d')} • {event.start_time}
                   </span>
                 </div>
 
-                <h5 className="font-semibold text-neutral-900 text-xs sm:text-sm line-clamp-1 group-hover:text-[#7865F5] transition-colors">
+                <h5 className="font-semibold text-[#111111] text-xs sm:text-sm line-clamp-1 group-hover:text-[#7865F5] transition-colors">
                   {event.title}
                 </h5>
 
-                <div className="flex items-center justify-between mt-2 pt-2 border-t border-neutral-100/80 text-[11px] text-neutral-500">
-                  <div className="flex items-center gap-1 truncate max-w-[170px]">
+                <div className="flex items-center justify-between mt-2 pt-2 border-t border-neutral-100 text-[11px] text-neutral-500">
+                  <div className="flex items-center gap-1 truncate max-w-[165px]">
                     <MapPin className="w-3 h-3 text-neutral-400 shrink-0" />
                     <span className="truncate">{event.location}</span>
                   </div>
@@ -351,7 +369,7 @@ export const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
                     className={cn(
                       'px-2.5 py-1 rounded-full text-[10px] font-semibold transition-all shrink-0',
                       event.is_registered
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        ? 'bg-emerald-50 text-[#16A36A] border border-emerald-200'
                         : 'bg-[#111111] text-white hover:bg-black'
                     )}
                   >
@@ -362,10 +380,18 @@ export const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
             ))}
           </div>
         )}
+
+        <Link
+          to="/events"
+          className="mt-4 w-full py-2.5 rounded-xl bg-[#F8F8F8] hover:bg-neutral-100 border border-[#EAEAEA] text-xs font-bold text-[#111111] flex items-center justify-center gap-1.5 transition-colors"
+        >
+          <span>View All Events</span>
+          <ArrowUpRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
 
-      {/* Mini Promotion / Mentorship Banner */}
-      <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 text-white rounded-3xl p-5 shadow-sm relative overflow-hidden">
+      {/* Mentorship Quick Banner */}
+      <div className="bg-[#111111] text-white rounded-3xl p-5 shadow-sm relative overflow-hidden">
         <div className="relative z-10">
           <div className="flex items-center gap-1.5 text-xs text-amber-400 font-semibold mb-1">
             <Sparkles className="w-3.5 h-3.5" />
@@ -375,15 +401,14 @@ export const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
           <p className="text-xs text-neutral-300 mt-1 mb-3">
             Book 30-min portfolio and career sessions with verified alumni leaders.
           </p>
-          <a
-            href="/mentorship"
-            className="inline-flex items-center text-xs font-semibold text-white bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition-colors"
+          <Link
+            to="/mentorship"
+            className="inline-flex items-center text-xs font-semibold text-white bg-white/15 hover:bg-white/25 px-3.5 py-1.5 rounded-full transition-colors"
           >
             Find a Mentor →
-          </a>
+          </Link>
         </div>
       </div>
     </aside>
   );
 };
-

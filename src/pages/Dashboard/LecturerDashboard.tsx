@@ -25,7 +25,7 @@ export const LecturerDashboard: React.FC = () => {
   const academicEvents = events.filter((e) => e.category === 'Seminar' || e.category === 'Academic');
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-8">
       {/* Top Banner */}
       <div className="bg-white rounded-3xl border border-[#EAEAEA] p-6 sm:p-8 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
@@ -58,6 +58,14 @@ export const LecturerDashboard: React.FC = () => {
       </div>
 
       {/* Metrics Row */}
+      <div className="flex items-center justify-between -mb-4">
+        <span className="text-xs font-bold uppercase tracking-wider text-[#929292]">
+          Academic Analytics
+        </span>
+        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-500">
+          Read Only
+        </span>
+      </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         <div className="bg-white p-5 rounded-2xl border border-neutral-200/80 shadow-2xs">
           <span className="text-xs font-semibold text-neutral-400 block mb-1">Active Academic Events</span>
@@ -92,6 +100,9 @@ export const LecturerDashboard: React.FC = () => {
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-[#16A36A]" />
               <h3 className="font-bold text-neutral-900 text-base">Faculty & Academic Events</h3>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
+                Manage
+              </span>
             </div>
             <button
               onClick={() => setIsEventModalOpen(true)}
@@ -133,6 +144,9 @@ export const LecturerDashboard: React.FC = () => {
             <div className="flex items-center gap-2 mb-3">
               <Bell className="w-4 h-4 text-emerald-600" />
               <h3 className="font-bold text-neutral-900 text-base">Campus Announcements</h3>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
+                Manage
+              </span>
             </div>
             <p className="text-xs text-neutral-500 mb-4 leading-relaxed">
               Broadcast thesis deadlines, symposium calls for papers, and lab hours to students.
