@@ -89,24 +89,25 @@ export const AdminDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-8">
       {/* Top Banner */}
       <div className="bg-white rounded-3xl border border-[#EAEAEA] p-6 sm:p-8 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <img
-            src={user?.avatar_url || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=256'}
-            alt="Admin Avatar"
-            className="w-16 h-16 rounded-2xl object-cover border border-neutral-200"
-          />
+          <div className="w-14 h-14 rounded-2xl bg-[#111111] text-white flex items-center justify-center border border-neutral-800 shrink-0">
+            <ShieldCheck className="w-7 h-7 text-[#7865F5]" />
+          </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-2xl font-extrabold text-[#111111] tracking-tight">
                 CAMPLY Governance & Platform Admin
               </h2>
               <RoleBadge role="ADMIN" size="sm" />
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#111111] text-white">
+                Admin Only
+              </span>
             </div>
             <p className="text-xs sm:text-sm text-neutral-500 mt-1">
-              Logged in as {user?.full_name || 'Elena Rostova'} • Ecosystem Oversight & Campus Analytics
+              Platform Operations Console • Ecosystem Oversight & Campus Analytics
             </p>
           </div>
         </div>
@@ -243,6 +244,9 @@ export const AdminDashboard: React.FC = () => {
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-emerald-600" />
             <h3 className="font-bold text-neutral-900 text-base">Campus Verification & Moderation Queue</h3>
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#111111] text-white">
+              Admin Only
+            </span>
           </div>
           <span className="text-xs bg-amber-50 text-amber-800 font-semibold px-3 py-1 rounded-full">
             {pendingVerifications.length} Pending Approval

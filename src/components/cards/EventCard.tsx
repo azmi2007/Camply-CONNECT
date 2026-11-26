@@ -94,7 +94,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onSelect }) => {
             <div className="flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
               <span>
-                <strong className="text-neutral-800">{event.current_participants}</strong> registered / {event.max_participants} max
+                <strong className="text-neutral-800">{event.current_participants}</strong> registered •{' '}
+                <span className="text-[#16A36A] font-semibold">
+                  {Math.max(0, event.max_participants - event.current_participants)} seats left
+                </span>
               </span>
             </div>
           </div>

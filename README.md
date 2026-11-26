@@ -147,18 +147,18 @@ camply/
 
 ---
 
-## 6. Demo Accounts (1-Click Simulator)
+## 6. Demo Accounts & Role-Based Access Control
 
-CAMPLY includes 4 pre-configured demo accounts corresponding to the required user roles:
+CAMPLY uses credential-based demo login on `/login` with strict role-based access control (`ProtectedRoute` and `PermissionGate`) and Dark/Light mode support. Admin accounts are private and accessed via `/admin-login` (not exposed in public registration or role selectors).
 
-| Role | Name | Email | Headline / Description |
+| Role | Identifier | Password | Dashboard Route |
 | :--- | :--- | :--- | :--- |
-| **STUDENT** | Alex Rivera | `alex.student@camply.edu` | Undergraduate CS Student • Class of 2027 |
-| **ALUMNI** | Sarah Jenkins | `sarah.alumni@camply.edu` | Senior Product Designer @ Stripe • Class of 2021 |
-| **LECTURER** | Dr. Marcus Vance | `marcus.lecturer@camply.edu` | Associate Professor of Computer Science • NIDN: LEC-40918 |
-| **ADMIN** | Elena Rostova | `admin@camply.edu` | Director of University Ecosystem & Governance |
+| **STUDENT** | `23100001` (NIM) or `alex.student@camply.edu` | `student123` | `/dashboard/student` |
+| **ALUMNI** | `alumni@camply.demo` or `ALM-2021-001` | `alumni123` | `/dashboard/alumni` |
+| **LECTURER** | `0012345678` (NIDN) or `marcus.lecturer@camply.edu` | `lecturer123` | `/dashboard/lecturer` |
+| **ADMIN** | Private administrator credentials via `/admin-login` | — | `/admin` |
 
-> **Pro Tip:** In the top navigation bar or directly on the `/dashboard` route, use the **Role Simulator** pill selector to switch between all 4 dashboards with one click.
+> **Pro Tip:** On `/login`, select your campus role tab and click **Fill Demo Credentials** to test each role's authorized experience. Click the **CAMPLY** logo in the navbar to open the role-aware slide-in navigation sidebar.
 
 ---
 

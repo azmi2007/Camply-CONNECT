@@ -1,45 +1,58 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
-import { Button } from '../../components/ui/Button';
-import { RoleBadge } from '../../components/ui/RoleBadge';
-import { UserRole } from '../../types';
-import { ArrowRight, Lock, Mail, Sparkles, CheckCircle2 } from 'lucide-react';
+import { PublicLoginRole } from '../../features/auth/authService';
+import { LoginRoleSelector } from '../../features/auth/login/LoginRoleSelector';
+import { LoginForm } from '../../features/auth/login/LoginForm';
+import { getDefaultDashboardRoute } from '../../features/permissions/permissions';
+import { Sparkles, CheckCircle2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { login, switchDemoRole } = useAuthStore();
+  const location = useLocation();
+  const { loginWithCredentials } = useAuthStore();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [selectedRole, setSelectedRole] = useState<UserRole>('STUDENT');
+  const [selectedRole, setSelectedRole] = useState<PublicLoginRole>('STUDENT');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLogin = async (identifier: string, password: string) => {
+    setError(null);
+    setSuccessMessage(null);
     setIsLoading(true);
 
     try {
-      await login(email || 'demo@camply.edu', selectedRole);
+      const result = await loginWithCredentials({
+        role: selectedRole,
+        identifier,
+        password
+      });
+
+      if (!result.success || !result.user) {
+        setError(result.error || 'Authentication failed.');
+        return;
+      }
+
+      setSuccessMessage(`Signed in as ${result.user.full_name}. Redirecting...`);
       confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
-      navigate('/dashboard');
+
+      const fromState = (location.state as { from?: string } | null)?.from;
+      const target = fromState && !fromState.startsWith('/admin')
+        ? fromState
+        : getDefaultDashboardRoute(result.user.role);
+
+      setTimeout(() => navigate(target, { replace: true }), 400);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleQuickDemo = (role: UserRole) => {
-    switchDemoRole(role);
-    confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
-    navigate('/dashboard');
-  };
-
   return (
     <div className="min-h-[calc(100vh-72px)] flex items-stretch">
-      {/* Left Column: Brand Showcase & Editorial Intro */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#111111] text-white p-12 flex-col justify-between relative overflow-hidden">
-        {/* Subtle decorative circles */}
+      {/* Left Column: Brand Showcase */}
+      <div className="hidden lg:flex lg:w-1/2 bg-[#111111] dark:bg-[#101114] text-white p-12 flex-col justify-between relative overflow-hidden border-r border-transparent dark:border-[#2C2F38]">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#7865F5]/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-neutral-800/40 rounded-full blur-2xl" />
 
@@ -61,7 +74,7 @@ export const LoginPage: React.FC = () => {
           <div className="max-w-md">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-neutral-300 text-xs font-semibold mb-6">
               <Sparkles className="w-3.5 h-3.5 text-[#7865F5]" />
-              <span>Campus Networking Platform</span>
+              <span>University Identity Sign-In</span>
             </div>
             <h2 className="text-4xl font-extrabold tracking-tight text-white leading-tight mb-4">
               Your Campus. <br />
@@ -69,181 +82,65 @@ export const LoginPage: React.FC = () => {
               Your Future.
             </h2>
             <p className="text-neutral-400 text-sm leading-relaxed mb-8">
-              Access your personalized role dashboard, connect with mentors from top global firms, and explore campus opportunities.
+              Authenticate with your Student NIM, Alumni email, or institutional Lecturer ID to access your authorized dashboard.
             </p>
 
-            {/* Role highlights */}
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-xs text-neutral-300">
                 <CheckCircle2 className="w-4 h-4 text-blue-400 shrink-0" />
-                <span><strong>Students:</strong> Access internships, mentorship & student clubs.</span>
+                <span><strong>Students:</strong> Discover internships, mentorship & campus events.</span>
               </div>
               <div className="flex items-center gap-3 text-xs text-neutral-300">
                 <CheckCircle2 className="w-4 h-4 text-purple-400 shrink-0" />
-                <span><strong>Alumni:</strong> Mentor undergraduates & hire campus talent.</span>
+                <span><strong>Alumni:</strong> Mentor undergraduates & publish career vacancies.</span>
               </div>
               <div className="flex items-center gap-3 text-xs text-neutral-300">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span><strong>Lecturers:</strong> Host academic conferences & publish research.</span>
+                <span><strong>Lecturers:</strong> Host academic summits & publish announcements.</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Footer quote */}
         <div className="relative z-10 pt-8 border-t border-white/10 text-xs text-neutral-400">
-          <p className="italic">"CAMPLY has transformed how our students connect with graduates globally."</p>
-          <span className="text-neutral-500 block mt-1">— University Relations & Dean of Engineering</span>
+          <p className="italic">"CAMPLY connects our campus ecosystem through verified academic identities."</p>
         </div>
       </div>
 
-      {/* Right Column: Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-white">
+      {/* Right Column: Role-Specific Demo Login */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-white dark:bg-[#181A20]">
         <div className="w-full max-w-md">
-          <div className="mb-8">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111111] tracking-tight">
-              Welcome Back
-            </h2>
-            <p className="text-xs sm:text-sm text-neutral-500 mt-1">
-              Sign in with your university credentials or select a demo role.
+          <div className="mb-6">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111111] dark:text-[#F5F5F5] tracking-tight">
+              Sign in to CAMPLY
+            </h1>
+            <p className="text-xs sm:text-sm text-[#929292] dark:text-[#A0A0A0] mt-1">
+              Select your campus identity type to sign in with demo or university credentials.
             </p>
           </div>
 
-          {/* Quick Demo Role Clickers */}
-          <div className="mb-6 p-4 rounded-2xl bg-neutral-50 border border-neutral-100">
-            <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider block mb-2">
-              Instant Demo Access (1-Click Login):
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickDemo('STUDENT')}
-                className="p-2.5 rounded-xl border border-blue-200 bg-white hover:bg-blue-50/50 text-left transition-colors flex items-center justify-between"
-              >
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-neutral-900">Alex (Student)</span>
-                  <span className="text-[10px] text-neutral-400">CS Senior</span>
-                </div>
-                <RoleBadge role="STUDENT" size="sm" showDot={false} />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickDemo('ALUMNI')}
-                className="p-2.5 rounded-xl border border-purple-200 bg-white hover:bg-purple-50/50 text-left transition-colors flex items-center justify-between"
-              >
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-neutral-900">Sarah (Alumni)</span>
-                  <span className="text-[10px] text-neutral-400">Stripe Designer</span>
-                </div>
-                <RoleBadge role="ALUMNI" size="sm" showDot={false} />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickDemo('LECTURER')}
-                className="p-2.5 rounded-xl border border-emerald-200 bg-white hover:bg-emerald-50/50 text-left transition-colors flex items-center justify-between"
-              >
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-neutral-900">Dr. Marcus (Faculty)</span>
-                  <span className="text-[10px] text-neutral-400">Prof. CS Dept</span>
-                </div>
-                <RoleBadge role="LECTURER" size="sm" showDot={false} />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickDemo('ADMIN')}
-                className="p-2.5 rounded-xl border border-neutral-300 bg-white hover:bg-neutral-100 text-left transition-colors flex items-center justify-between"
-              >
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-neutral-900">Elena (Admin)</span>
-                  <span className="text-[10px] text-neutral-400">Director</span>
-                </div>
-                <RoleBadge role="ADMIN" size="sm" showDot={false} />
-              </button>
-            </div>
+          <div className="mb-6">
+            <LoginRoleSelector
+              selectedRole={selectedRole}
+              onSelectRole={(r) => {
+                setSelectedRole(r);
+                setError(null);
+              }}
+            />
           </div>
 
-          <div className="relative my-6 text-center">
-            <span className="bg-white px-3 text-xs text-neutral-400 relative z-10">Or sign in with email</span>
-            <div className="absolute inset-0 top-1/2 border-t border-neutral-100 -z-0" />
-          </div>
+          <LoginForm
+            role={selectedRole}
+            isLoading={isLoading}
+            error={error}
+            successMessage={successMessage}
+            onSubmit={handleLogin}
+          />
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-                University Email Address
-              </label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@university.edu"
-                  className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200 focus:outline-none focus:border-[#7865F5]"
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-semibold text-neutral-700">
-                  Password
-                </label>
-                <Link to="/forgot-password" className="text-xs text-[#7865F5] font-semibold hover:underline">
-                  Forgot?
-                </Link>
-              </div>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200 focus:outline-none focus:border-[#7865F5]"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-                Select Account Role
-              </label>
-              <select
-                value={selectedRole}
-                onChange={(e) => setSelectedRole(e.target.value as UserRole)}
-                className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-neutral-200 focus:outline-none focus:border-[#7865F5] bg-white"
-              >
-                <option value="STUDENT">Student</option>
-                <option value="ALUMNI">Alumni</option>
-                <option value="LECTURER">Lecturer / Faculty</option>
-                <option value="ADMIN">Administrator</option>
-              </select>
-            </div>
-
-            <Button
-              variant="primary"
-              size="lg"
-              type="submit"
-              isLoading={isLoading}
-              className="mt-2 w-full"
-              icon={<ArrowRight className="w-4 h-4" />}
-            >
-              Sign In to CAMPLY
-            </Button>
-          </form>
-
-          {/* Bottom link */}
-          <p className="text-center text-xs text-neutral-500 mt-6">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-neutral-900 font-bold hover:underline">
-              Create an account
+          <p className="text-center text-xs text-[#929292] mt-6">
+            New to CAMPLY?{' '}
+            <Link to="/register" className="text-[#111111] dark:text-[#F5F5F5] font-bold hover:underline">
+              Create a Student, Alumni, or Lecturer account
             </Link>
           </p>
         </div>
@@ -251,4 +148,3 @@ export const LoginPage: React.FC = () => {
     </div>
   );
 };
-

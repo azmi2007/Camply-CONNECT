@@ -18,17 +18,40 @@ export type JobType =
   | 'Freelance' 
   | 'Remote';
 
+export type WorkMode = 'Remote' | 'Hybrid' | 'On-site';
+
+export interface ExperienceItem {
+  id: string;
+  role: string;
+  company: string;
+  duration: string;
+  location: string;
+  description: string;
+}
+
+export interface EducationItem {
+  id: string;
+  institution: string;
+  degree: string;
+  field: string;
+  period: string;
+}
+
 export interface Profile {
   id: string;
   full_name: string;
   email: string;
   role: UserRole;
   avatar_url: string;
+  cover_url?: string;
   bio?: string;
   headline?: string;
   university: string;
   faculty?: string;
   major?: string;
+  location?: string;
+  industry?: string;
+  interests?: string[];
   
   // Student
   student_id?: string;
@@ -43,6 +66,16 @@ export interface Profile {
   // Lecturer
   department?: string;
   lecturer_id?: string;
+
+  // Innovator spotlight
+  is_innovator?: boolean;
+  project_title?: string;
+  achievement?: string;
+  activity_indicator?: string;
+
+  // Detailed profile sections
+  experiences?: ExperienceItem[];
+  education?: EducationItem[];
 
   // Mentorship & Networking
   is_mentor_available?: boolean;
@@ -64,6 +97,20 @@ export interface University {
   logo_url: string;
   city: string;
   website: string;
+}
+
+export interface FacultyInfo {
+  id: string;
+  name: string;
+  short_name: string;
+  category_key: string;
+  description: string;
+  member_count: number;
+  alumni_count: number;
+  career_count: number;
+  departments: string[];
+  featured_communities: string[];
+  accent_color: string;
 }
 
 export interface Company {
@@ -88,8 +135,10 @@ export interface EventItem {
   };
   title: string;
   description: string;
+  agenda?: string[];
   banner_url: string;
   category: EventCategory;
+  faculty?: string;
   event_date: string; // YYYY-MM-DD
   start_time: string; // HH:mm
   end_time: string; // HH:mm
@@ -100,6 +149,7 @@ export interface EventItem {
   max_participants: number;
   current_participants: number;
   status: 'UPCOMING' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
+  is_featured?: boolean;
   tags: string[];
   is_registered?: boolean;
   is_saved?: boolean;
@@ -119,6 +169,8 @@ export interface JobVacancy {
   description: string;
   requirements: string[];
   location: string;
+  work_mode?: WorkMode;
+  faculty?: string;
   employment_type: JobType;
   salary_range?: string;
   deadline: string;

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -38,8 +37,10 @@ export const Footer: React.FC = () => {
           <div>
             <h5 className="font-bold text-neutral-900 text-xs uppercase tracking-wider mb-4">Platform</h5>
             <ul className="flex flex-col gap-2.5 text-xs text-neutral-500">
-              <li><Link to="/community" className="hover:text-neutral-900 transition-colors">Campus Community</Link></li>
+              <li><Link to="/community" className="hover:text-neutral-900 transition-colors">Explore Community</Link></li>
+              <li><Link to="/faculties" className="hover:text-neutral-900 transition-colors">Fields & Faculties</Link></li>
               <li><Link to="/events" className="hover:text-neutral-900 transition-colors">Events & Workshops</Link></li>
+              <li><Link to="/calendar" className="hover:text-neutral-900 transition-colors">Campus Calendar</Link></li>
               <li><Link to="/careers" className="hover:text-neutral-900 transition-colors">Career & Internships</Link></li>
               <li><Link to="/alumni" className="hover:text-neutral-900 transition-colors">Alumni Directory</Link></li>
               <li><Link to="/mentorship" className="hover:text-neutral-900 transition-colors">Mentorship Program</Link></li>
@@ -80,4 +81,3 @@ export const Footer: React.FC = () => {
     </footer>
   );
 };
-

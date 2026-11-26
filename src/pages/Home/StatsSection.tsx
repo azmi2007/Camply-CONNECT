@@ -6,28 +6,32 @@ export const StatsSection: React.FC = () => {
   const stats = [
     {
       label: 'Community Members',
-      value: 10400,
+      value: 10000,
+      compactK: true,
       suffix: '+',
       icon: Users,
-      description: 'Undergraduates, researchers & alumni'
+      description: 'Undergraduates, researchers & faculty'
+    },
+    {
+      label: 'Alumni',
+      value: 1000,
+      compactK: true,
+      suffix: '+',
+      icon: Award,
+      description: 'Mentoring from leading global firms'
     },
     {
       label: 'Campus Events',
-      value: 520,
+      value: 500,
+      compactK: false,
       suffix: '+',
       icon: Calendar,
       description: 'Workshops, hackathons & seminars'
     },
     {
-      label: 'Verified Alumni',
-      value: 1200,
-      suffix: '+',
-      icon: Award,
-      description: 'Mentoring from leading tech companies'
-    },
-    {
       label: 'Career Opportunities',
-      value: 340,
+      value: 300,
+      compactK: false,
       suffix: '+',
       icon: Briefcase,
       description: 'Exclusive internships & fresh-grad jobs'
@@ -43,17 +47,17 @@ export const StatsSection: React.FC = () => {
             return (
               <div key={idx} className="flex flex-col">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-800">
+                  <div className="w-8 h-8 rounded-xl bg-[#F8F8F8] border border-[#EAEAEA] flex items-center justify-center text-[#111111]">
                     <Icon className="w-4 h-4 text-[#7865F5]" />
                   </div>
-                  <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[#929292]">
                     {item.label}
                   </span>
                 </div>
                 <div className="text-3xl sm:text-4xl font-extrabold text-[#111111] tracking-tight">
-                  <Counter value={item.value} suffix={item.suffix} />
+                  <Counter value={item.value} compactK={item.compactK} suffix={item.suffix} />
                 </div>
-                <p className="text-xs text-neutral-500 mt-1">{item.description}</p>
+                <p className="text-xs text-[#929292] mt-1">{item.description}</p>
               </div>
             );
           })}
@@ -62,4 +66,3 @@ export const StatsSection: React.FC = () => {
     </section>
   );
 };
-
