@@ -17,7 +17,6 @@ import { MentorshipPage } from './pages/Mentorship/MentorshipPage';
 import { LoginPage } from './pages/Auth/LoginPage';
 import { RegisterPage } from './pages/Auth/RegisterPage';
 import { ForgotPasswordPage } from './pages/Auth/ForgotPasswordPage';
-import { AdminLoginPage } from './pages/Auth/AdminLoginPage';
 import { UnauthorizedPage } from './pages/Auth/UnauthorizedPage';
 
 import { StudentDashboard } from './pages/Dashboard/StudentDashboard';
@@ -52,7 +51,8 @@ export function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/admin-login" element={<AdminLoginPage />} />
+          {/* Kept as a compatibility URL; all roles use the same sign-in form. */}
+          <Route path="/admin-login" element={<Navigate to="/login" replace />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
           {/* Dashboard redirect — sends authenticated users to their role dashboard */}

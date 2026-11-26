@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { RoleBadge } from '../../components/ui/RoleBadge';
+import { CamplyMark } from '../../components/ui/CamplyMark';
 import { cn } from '../../lib/utils';
 
 interface SidebarOverlayProps {
@@ -217,23 +218,9 @@ export const LogoSidebar: React.FC<LogoSidebarProps> = ({ isOpen, onClose }) => 
           >
             {/* Header */}
             <div className="p-5 border-b border-[#EAEAEA] dark:border-[#2C2F38] flex items-center justify-between">
-              <Link to="/" onClick={onClose} className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-2xl bg-[#111111] dark:bg-[#20232B] flex items-center justify-center text-white border border-transparent dark:border-[#2C2F38]">
-                  <svg className="w-5 h-5 text-[#7865F5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M4 19L12 5L20 19" />
-                    <circle cx="4" cy="19" r="2" fill="#7865F5" />
-                    <circle cx="12" cy="5" r="2" fill="#FFFFFF" />
-                    <circle cx="20" cy="19" r="2" fill="#7865F5" />
-                  </svg>
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-extrabold text-lg tracking-tight text-[#111111] dark:text-[#F5F5F5] leading-none">
-                    CAMPLY<span className="text-[#7865F5]">.</span>
-                  </span>
-                  <span className="text-[9px] uppercase tracking-wider text-[#929292] font-semibold mt-0.5">
-                    Campus Ecosystem
-                  </span>
-                </div>
+              <Link to="/" onClick={onClose} className="flex items-center gap-2 rounded-lg transition-transform hover:scale-[1.03]">
+                <CamplyMark className="h-9 w-12" />
+                <span className="text-lg font-extrabold tracking-[0.12em] text-[#111111] dark:text-[#F5F5F5]">CAMPLY</span>
               </Link>
 
               <button

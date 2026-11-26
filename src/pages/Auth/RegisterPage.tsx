@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Button } from '../../components/ui/Button';
 import { RoleBadge } from '../../components/ui/RoleBadge';
+import { CamplyMark } from '../../components/ui/CamplyMark';
 import { UserRole } from '../../types';
 import { 
   ArrowRight, 
@@ -99,18 +100,9 @@ export const RegisterPage: React.FC = () => {
         <div className="absolute -top-20 -right-20 w-96 h-96 bg-[#7865F5]/10 rounded-full blur-3xl" />
         
         <div className="relative z-10">
-          <Link to="/" className="inline-flex items-center gap-2 mb-12">
-            <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white">
-              <svg className="w-5 h-5 text-[#7865F5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M4 19L12 5L20 19" />
-                <circle cx="4" cy="19" r="2" fill="#7865F5" />
-                <circle cx="12" cy="5" r="2" fill="#FFFFFF" />
-                <circle cx="20" cy="19" r="2" fill="#7865F5" />
-              </svg>
-            </div>
-            <span className="font-extrabold text-xl tracking-tight text-white">
-              CAMPLY<span className="text-[#7865F5]">.</span>
-            </span>
+          <Link to="/" className="mb-12 inline-flex items-center gap-2 transition-transform hover:scale-[1.03]">
+            <CamplyMark className="h-10 w-[53px]" />
+            <span className="text-xl font-extrabold tracking-[0.12em] text-white">CAMPLY</span>
           </Link>
 
           <div className="max-w-md">

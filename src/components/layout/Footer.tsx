@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { CamplyMark } from '../ui/CamplyMark';
 
 export const Footer: React.FC = () => {
   return (
@@ -8,18 +9,9 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-10 pb-12 border-b border-neutral-100">
           {/* Brand Info */}
           <div className="md:col-span-2">
-            <Link to="/" className="flex items-center gap-2.5 mb-4">
-              <div className="w-9 h-9 rounded-2xl bg-[#111111] flex items-center justify-center text-white shadow-xs">
-                <svg className="w-4 h-4 text-[#7865F5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M4 19L12 5L20 19" />
-                  <circle cx="4" cy="19" r="2" fill="#7865F5" />
-                  <circle cx="12" cy="5" r="2" fill="#FFFFFF" />
-                  <circle cx="20" cy="19" r="2" fill="#7865F5" />
-                </svg>
-              </div>
-              <span className="font-extrabold text-xl tracking-tight text-[#111111]">
-                CAMPLY<span className="text-[#7865F5]">.</span>
-              </span>
+            <Link to="/" className="mb-4 inline-flex items-center gap-2 transition-transform hover:scale-[1.03]">
+              <CamplyMark className="h-9 w-12" />
+              <span className="text-xl font-extrabold tracking-[0.12em] text-[#111111]">CAMPLY</span>
             </Link>
             <p className="text-sm font-medium text-neutral-500 mb-2">
               "Your Campus. Your People. Your Future."
