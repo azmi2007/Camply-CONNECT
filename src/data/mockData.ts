@@ -25,6 +25,7 @@ export const DEMO_USERS: Record<string, Profile> = {
     activity_indicator: '14 events hosted • 28 contributions',
     skills: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Tailwind CSS', 'Figma'],
     connections_count: 142,
+    followers_count: 86,
     mutual_connections: 18,
     linkedin_url: 'https://linkedin.com/in/alex-rivera-camply',
     github_url: 'https://github.com/alex-rivera',

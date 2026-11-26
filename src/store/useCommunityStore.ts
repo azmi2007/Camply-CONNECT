@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { Profile, NotificationItem } from '../types';
 import { INITIAL_MEMBERS, INITIAL_NOTIFICATIONS } from '../data/mockData';
+import { useAuthStore } from './useAuthStore';
 
 export interface DirectMessage {
   id: string;
@@ -8,6 +9,8 @@ export interface DirectMessage {
   text: string;
   sentAt: string;
 }
+
+const getCurrentUserId = () => useAuthStore.getState().user?.id;
 
 interface CommunityState {
   members: Profile[];
@@ -43,6 +46,8 @@ export const useCommunityStore = create<CommunityState>((set) => ({
 
   sendConnectionRequest: (targetMemberId: string) => {
     set((state) => {
+      const currentUserId = getCurrentUserId();
+      if (currentUserId && targetMemberId === currentUserId) return state;
       if (state.sentRequestIds.includes(targetMemberId) || state.connectedIds.includes(targetMemberId)) {
         return state;
       }
@@ -53,34 +58,46 @@ export const useCommunityStore = create<CommunityState>((set) => ({
   },
 
   acceptConnection: (targetMemberId: string) => {
-    set((state) => ({
-      connectedIds: state.connectedIds.includes(targetMemberId)
-        ? state.connectedIds
-        : [...state.connectedIds, targetMemberId],
-      sentRequestIds: state.sentRequestIds.filter((id) => id !== targetMemberId)
-    }));
+    set((state) => {
+      const currentUserId = getCurrentUserId();
+      if (currentUserId && targetMemberId === currentUserId) return state;
+      return {
+        connectedIds: state.connectedIds.includes(targetMemberId)
+          ? state.connectedIds
+          : [...state.connectedIds, targetMemberId],
+        sentRequestIds: state.sentRequestIds.filter((id) => id !== targetMemberId)
+      };
+    });
   },
 
   toggleFollow: (targetMemberId: string) => {
-    set((state) => ({
-      followingIds: state.followingIds.includes(targetMemberId)
-        ? state.followingIds.filter((id) => id !== targetMemberId)
-        : [...state.followingIds, targetMemberId]
-    }));
+    set((state) => {
+      const currentUserId = getCurrentUserId();
+      if (currentUserId && targetMemberId === currentUserId) return state;
+      return {
+        followingIds: state.followingIds.includes(targetMemberId)
+          ? state.followingIds.filter((id) => id !== targetMemberId)
+          : [...state.followingIds, targetMemberId]
+      };
+    });
   },
 
   sendMessageToMember: (recipientId: string, text: string) => {
-    set((state) => ({
-      messages: [
-        {
-          id: `msg-${Date.now()}`,
-          recipientId,
-          text,
-          sentAt: 'Just now'
-        },
-        ...state.messages
-      ]
-    }));
+    set((state) => {
+      const currentUserId = getCurrentUserId();
+      if (currentUserId && recipientId === currentUserId) return state;
+      return {
+        messages: [
+          {
+            id: `msg-${Date.now()}`,
+            recipientId,
+            text,
+            sentAt: 'Just now'
+          },
+          ...state.messages
+        ]
+      };
+    });
   },
 
   markNotificationRead: (notifId: string) => {

@@ -82,6 +82,7 @@ export interface Profile {
   mentor_expertise?: string[];
   skills?: string[];
   connections_count?: number;
+  followers_count?: number;
   mutual_connections?: number;
 
   linkedin_url?: string;

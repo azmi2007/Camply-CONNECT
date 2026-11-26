@@ -3,6 +3,7 @@ import { Briefcase, GraduationCap, UserPlus, Check, Sparkles } from 'lucide-reac
 import { Profile } from '../../types';
 import { RoleBadge } from '../ui/RoleBadge';
 import { useCommunityStore } from '../../store/useCommunityStore';
+import { useAuthStore } from '../../store/useAuthStore';
 import confetti from 'canvas-confetti';
 
 interface AlumniCardProps {
@@ -12,13 +13,15 @@ interface AlumniCardProps {
 
 export const AlumniCard: React.FC<AlumniCardProps> = ({ alumni, onSelect }) => {
   const { sentRequestIds, connectedIds, sendConnectionRequest } = useCommunityStore();
+  const currentUser = useAuthStore((state) => state.user);
 
+  const isSelf = currentUser?.id === alumni.id;
   const isConnected = connectedIds.includes(alumni.id);
   const isPending = sentRequestIds.includes(alumni.id);
 
   const handleConnect = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isConnected || isPending) return;
+    if (isSelf || isConnected || isPending) return;
 
     sendConnectionRequest(alumni.id);
     confetti({
@@ -101,31 +104,37 @@ export const AlumniCard: React.FC<AlumniCardProps> = ({ alumni, onSelect }) => {
           {alumni.mutual_connections || 12} mutual connections
         </span>
 
-        <button
-          onClick={handleConnect}
-          disabled={isConnected || isPending}
-          className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1 ${
-            isConnected
-              ? 'bg-neutral-100 text-neutral-600 cursor-default'
-              : isPending
-              ? 'bg-purple-50 text-[#7865F5] border border-purple-200 cursor-default'
-              : 'bg-[#111111] text-white hover:bg-black/90 shadow-sm'
-          }`}
-        >
-          {isConnected ? (
-            <>
-              <Check className="w-3 h-3 text-emerald-600" />
-              Connected
-            </>
-          ) : isPending ? (
-            'Request Sent'
-          ) : (
-            <>
-              <UserPlus className="w-3 h-3" />
-              Connect
-            </>
-          )}
-        </button>
+        {isSelf ? (
+          <span className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-neutral-100 text-neutral-500">
+            You
+          </span>
+        ) : (
+          <button
+            onClick={handleConnect}
+            disabled={isConnected || isPending}
+            className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1 ${
+              isConnected
+                ? 'bg-neutral-100 text-neutral-600 cursor-default'
+                : isPending
+                ? 'bg-purple-50 text-[#7865F5] border border-purple-200 cursor-default'
+                : 'bg-[#111111] text-white hover:bg-black/90 shadow-sm'
+            }`}
+          >
+            {isConnected ? (
+              <>
+                <Check className="w-3 h-3 text-emerald-600" />
+                Connected
+              </>
+            ) : isPending ? (
+              'Request Sent'
+            ) : (
+              <>
+                <UserPlus className="w-3 h-3" />
+                Connect
+              </>
+            )}
+          </button>
+        )}
       </div>
     </div>
   );

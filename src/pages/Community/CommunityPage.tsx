@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useCommunityStore } from '../../store/useCommunityStore';
+import { useAuthStore } from '../../store/useAuthStore';
 import { RoleBadge } from '../../components/ui/RoleBadge';
 import { Button } from '../../components/ui/Button';
 import { UserRole } from '../../types';
@@ -22,6 +23,7 @@ export const CommunityPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { members, sentRequestIds, connectedIds, sendConnectionRequest } = useCommunityStore();
+  const currentUser = useAuthStore((state) => state.user);
 
   const initialFaculty = searchParams.get('faculty') || 'All';
 
@@ -144,6 +146,7 @@ export const CommunityPage: React.FC = () => {
 
   const handleConnect = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
+    if (currentUser?.id === id) return;
     sendConnectionRequest(id);
     confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
   };
@@ -324,6 +327,7 @@ export const CommunityPage: React.FC = () => {
           {filteredMembers.map((member) => {
             const isConnected = connectedIds.includes(member.id);
             const isPending = sentRequestIds.includes(member.id);
+            const isSelf = member.id === currentUser?.id;
             const profileUrl = member.role === 'ALUMNI' ? `/alumni/${member.id}` : `/profile/${member.id}`;
 
             return (
@@ -396,31 +400,37 @@ export const CommunityPage: React.FC = () => {
                     View Profile
                   </Link>
 
-                  <button
-                    onClick={(e) => handleConnect(e, member.id)}
-                    disabled={isConnected || isPending}
-                    className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1 ${
-                      isConnected
-                        ? 'bg-neutral-100 text-neutral-600 cursor-default'
-                        : isPending
-                        ? 'bg-purple-50 text-[#7865F5] border border-purple-200 cursor-default'
-                        : 'bg-[#111111] text-white hover:bg-black/90 shadow-sm'
-                    }`}
-                  >
-                    {isConnected ? (
-                      <>
-                        <Check className="w-3 h-3 text-[#16A36A]" />
-                        Connected
-                      </>
-                    ) : isPending ? (
-                      'Request Sent'
-                    ) : (
-                      <>
-                        <UserPlus className="w-3 h-3" />
-                        Connect
-                      </>
-                    )}
-                  </button>
+                  {isSelf ? (
+                    <span className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-[#F8F8F8] text-neutral-500 border border-[#EAEAEA]">
+                      You
+                    </span>
+                  ) : (
+                    <button
+                      onClick={(e) => handleConnect(e, member.id)}
+                      disabled={isConnected || isPending}
+                      className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1 ${
+                        isConnected
+                          ? 'bg-neutral-100 text-neutral-600 cursor-default'
+                          : isPending
+                          ? 'bg-purple-50 text-[#7865F5] border border-purple-200 cursor-default'
+                          : 'bg-[#111111] text-white hover:bg-black/90 shadow-sm'
+                      }`}
+                    >
+                      {isConnected ? (
+                        <>
+                          <Check className="w-3 h-3 text-[#16A36A]" />
+                          Connected
+                        </>
+                      ) : isPending ? (
+                        'Request Sent'
+                      ) : (
+                        <>
+                          <UserPlus className="w-3 h-3" />
+                          Connect
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
               </div>
             );
