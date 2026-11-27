@@ -4,6 +4,7 @@ import { Profile } from '../../types';
 import { RoleBadge } from '../ui/RoleBadge';
 import { useCommunityStore } from '../../store/useCommunityStore';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useRequireAuthentication } from '../../features/auth/useRequireAuthentication';
 import confetti from 'canvas-confetti';
 
 interface AlumniCardProps {
@@ -14,6 +15,7 @@ interface AlumniCardProps {
 export const AlumniCard: React.FC<AlumniCardProps> = ({ alumni, onSelect }) => {
   const { sentRequestIds, connectedIds, sendConnectionRequest } = useCommunityStore();
   const currentUser = useAuthStore((state) => state.user);
+  const requireAuthentication = useRequireAuthentication();
 
   const isSelf = currentUser?.id === alumni.id;
   const isConnected = connectedIds.includes(alumni.id);
@@ -21,6 +23,7 @@ export const AlumniCard: React.FC<AlumniCardProps> = ({ alumni, onSelect }) => {
 
   const handleConnect = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!requireAuthentication()) return;
     if (isSelf || isConnected || isPending) return;
 
     sendConnectionRequest(alumni.id);

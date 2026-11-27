@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { NotificationItem } from '../../types';
 import { useCommunityStore } from '../../store/useCommunityStore';
+import { formatRelativeTime } from '../../lib/utils';
 
 const notificationMeta: Record<NotificationItem['type'], {
   label: string;
@@ -181,7 +182,7 @@ export const NotificationDropdown: React.FC = () => {
                           {getMessagePreview(notification.message)}
                         </span>
                         <span className="mt-2 flex items-center gap-1.5 text-[10px] font-medium text-neutral-400 dark:text-neutral-500">
-                          <span>{notification.created_at}</span>
+                          <span>{formatRelativeTime(notification.created_at)}</span>
                           {notification.is_read && <Check className="h-3 w-3" aria-label="Read" />}
                         </span>
                       </span>

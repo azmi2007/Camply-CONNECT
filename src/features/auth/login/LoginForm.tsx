@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { AlertCircle, CheckCircle2, Eye, EyeOff, Lock, User } from 'lucide-react';
 import { DEMO_LOGIN_ACCOUNTS } from '../authService';
 import { Button } from '../../../components/ui/Button';
+import { isSupabaseConfigured } from '../../../lib/supabase/client';
 
 interface LoginFormProps {
   isLoading: boolean;
@@ -54,7 +55,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label htmlFor="login-identifier" className="mb-2 block text-sm font-medium text-[#242424] dark:text-[#E4E4E4]">
-            Account ID or university email
+            {isSupabaseConfigured ? 'University email' : 'Account ID or university email'}
           </label>
           <div className="relative">
             <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" aria-hidden="true" />
@@ -68,7 +69,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 setIdentifier(event.target.value);
                 setSelectedAccount(null);
               }}
-              placeholder="Student ID, alumni ID, or lecturer ID"
+              placeholder={isSupabaseConfigured ? 'you@university.edu' : 'Student ID, alumni ID, or lecturer ID'}
               className="w-full rounded-xl border border-[#DCDCDC] bg-white py-3 pl-10 pr-4 text-sm text-[#111111] outline-none transition-colors placeholder:text-neutral-400 focus:border-[#7865F5] focus:ring-3 focus:ring-[#7865F5]/15 dark:border-[#3A3D47] dark:bg-[#20232B] dark:text-[#F5F5F5]"
             />
           </div>
@@ -125,6 +126,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         </Button>
       </form>
 
+      {!isSupabaseConfigured && (
       <details className="border-t border-[#EAEAEA] pt-5 dark:border-[#2C2F38]">
         <summary className="cursor-pointer text-sm font-medium text-[#4E4E4E] marker:text-[#7865F5] dark:text-[#C9C9C9]">
           Use a demo account
@@ -158,6 +160,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           })}
         </div>
       </details>
+      )}
     </div>
   );
 };

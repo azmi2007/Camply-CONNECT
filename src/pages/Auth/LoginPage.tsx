@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { LoginForm } from '../../features/auth/login/LoginForm';
 import { getDefaultDashboardRoute } from '../../features/permissions/permissions';
+import { isSupabaseConfigured } from '../../lib/supabase/client';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -64,7 +65,9 @@ export const LoginPage: React.FC = () => {
                 Sign in to your account
               </h2>
               <p className="mt-2 text-sm leading-6 text-[#6B6B6B] dark:text-[#A0A0A0]">
-                Use your registered account ID or university email.
+                {isSupabaseConfigured
+                  ? 'Use the university email registered with your CAMPLY account.'
+                  : 'Use your registered account ID or university email.'}
               </p>
             </div>
 

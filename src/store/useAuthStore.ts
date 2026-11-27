@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Profile, UserRole } from '../types';
+import { Profile, RegistrationInput, UserRole } from '../types';
 import { authService, AuthResult } from '../features/auth/authService';
 
 interface AuthState {
@@ -10,7 +10,7 @@ interface AuthState {
     identifier: string;
     password: string;
   }) => Promise<AuthResult>;
-  register: (profileData: Partial<Profile>) => Promise<boolean>;
+  register: (profileData: RegistrationInput) => Promise<AuthResult>;
   logout: () => void;
   updateProfile: (updates: Partial<Profile>) => void;
 }
@@ -56,21 +56,23 @@ export const useAuthStore = create<AuthState>((set) => ({
     return res;
   },
 
-  register: async (profileData: Partial<Profile>) => {
+  register: async (profileData: RegistrationInput) => {
     const res = await authService.registerMember(profileData);
     if (res.success && res.user) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(res.user));
-      set({
-        user: res.user,
-        isAuthenticated: true,
-        activeRole: res.user.role
-      });
-      return true;
+      if (!res.requiresEmailConfirmation) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(res.user));
+        set({
+          user: res.user,
+          isAuthenticated: true,
+          activeRole: res.user.role
+        });
+      }
     }
-    return false;
+    return res;
   },
 
   logout: () => {
+    void authService.signOut();
     localStorage.removeItem(STORAGE_KEY);
     set({
       user: null,

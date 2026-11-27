@@ -1,38 +1,39 @@
-import React from 'react';
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from './components/layout/AppLayout';
 import { ProtectedRoute } from './features/permissions/ProtectedRoute';
 
-import { HomePage } from './pages/Home/HomePage';
-import { CommunityPage } from './pages/Community/CommunityPage';
-import { EventsPage } from './pages/Events/EventsPage';
-import { EventDetailPage } from './pages/Events/EventDetailPage';
-import { CalendarPage } from './pages/Calendar/CalendarPage';
-import { CareersPage } from './pages/Careers/CareersPage';
-import { AlumniPage } from './pages/Alumni/AlumniPage';
-import { AlumniProfilePage } from './pages/Alumni/AlumniProfilePage';
-import { FacultiesPage } from './pages/Faculties/FacultiesPage';
-import { MentorshipPage } from './pages/Mentorship/MentorshipPage';
+const HomePage = lazy(() => import('./pages/Home/HomePage').then(({ HomePage }) => ({ default: HomePage })));
+const CommunityPage = lazy(() => import('./pages/Community/CommunityPage').then(({ CommunityPage }) => ({ default: CommunityPage })));
+const EventsPage = lazy(() => import('./pages/Events/EventsPage').then(({ EventsPage }) => ({ default: EventsPage })));
+const EventDetailPage = lazy(() => import('./pages/Events/EventDetailPage').then(({ EventDetailPage }) => ({ default: EventDetailPage })));
+const CalendarPage = lazy(() => import('./pages/Calendar/CalendarPage').then(({ CalendarPage }) => ({ default: CalendarPage })));
+const CareersPage = lazy(() => import('./pages/Careers/CareersPage').then(({ CareersPage }) => ({ default: CareersPage })));
+const AlumniPage = lazy(() => import('./pages/Alumni/AlumniPage').then(({ AlumniPage }) => ({ default: AlumniPage })));
+const AlumniProfilePage = lazy(() => import('./pages/Alumni/AlumniProfilePage').then(({ AlumniProfilePage }) => ({ default: AlumniProfilePage })));
+const FacultiesPage = lazy(() => import('./pages/Faculties/FacultiesPage').then(({ FacultiesPage }) => ({ default: FacultiesPage })));
+const MentorshipPage = lazy(() => import('./pages/Mentorship/MentorshipPage').then(({ MentorshipPage }) => ({ default: MentorshipPage })));
+const LoginPage = lazy(() => import('./pages/Auth/LoginPage').then(({ LoginPage }) => ({ default: LoginPage })));
+const RegisterPage = lazy(() => import('./pages/Auth/RegisterPage').then(({ RegisterPage }) => ({ default: RegisterPage })));
+const ForgotPasswordPage = lazy(() => import('./pages/Auth/ForgotPasswordPage').then(({ ForgotPasswordPage }) => ({ default: ForgotPasswordPage })));
+const UnauthorizedPage = lazy(() => import('./pages/Auth/UnauthorizedPage').then(({ UnauthorizedPage }) => ({ default: UnauthorizedPage })));
+const StudentDashboard = lazy(() => import('./pages/Dashboard/StudentDashboard').then(({ StudentDashboard }) => ({ default: StudentDashboard })));
+const AlumniDashboard = lazy(() => import('./pages/Dashboard/AlumniDashboard').then(({ AlumniDashboard }) => ({ default: AlumniDashboard })));
+const LecturerDashboard = lazy(() => import('./pages/Dashboard/LecturerDashboard').then(({ LecturerDashboard }) => ({ default: LecturerDashboard })));
+const AdminDashboard = lazy(() => import('./pages/Dashboard/AdminDashboard').then(({ AdminDashboard }) => ({ default: AdminDashboard })));
+const DashboardRedirect = lazy(() => import('./pages/Dashboard/DashboardRedirect').then(({ DashboardRedirect }) => ({ default: DashboardRedirect })));
+const SettingsPage = lazy(() => import('./pages/Settings/SettingsPage').then(({ SettingsPage }) => ({ default: SettingsPage })));
+const AnnouncementsPage = lazy(() => import('./pages/Announcements/AnnouncementsPage').then(({ AnnouncementsPage }) => ({ default: AnnouncementsPage })));
+const AdminPlaceholder = lazy(() => import('./pages/Admin/AdminPlaceholder').then(({ AdminPlaceholder }) => ({ default: AdminPlaceholder })));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(({ NotFoundPage }) => ({ default: NotFoundPage })));
 
-import { LoginPage } from './pages/Auth/LoginPage';
-import { RegisterPage } from './pages/Auth/RegisterPage';
-import { ForgotPasswordPage } from './pages/Auth/ForgotPasswordPage';
-import { UnauthorizedPage } from './pages/Auth/UnauthorizedPage';
-
-import { StudentDashboard } from './pages/Dashboard/StudentDashboard';
-import { AlumniDashboard } from './pages/Dashboard/AlumniDashboard';
-import { LecturerDashboard } from './pages/Dashboard/LecturerDashboard';
-import { AdminDashboard } from './pages/Dashboard/AdminDashboard';
-import { DashboardRedirect } from './pages/Dashboard/DashboardRedirect';
-
-import { SettingsPage } from './pages/Settings/SettingsPage';
-import { AnnouncementsPage } from './pages/Announcements/AnnouncementsPage';
-import { AdminPlaceholder } from './pages/Admin/AdminPlaceholder';
+const RouteLoader = () => <div className="min-h-[45vh]" aria-label="Loading page" />;
 
 export function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <Suspense fallback={<RouteLoader />}>
+        <Routes>
         <Route element={<AppLayout />}>
           {/* Public routes */}
           <Route path="/" element={<HomePage />} />
@@ -126,6 +127,14 @@ export function App() {
             }
           />
           <Route
+            path="/admin/moderation"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN']}>
+                <AdminPlaceholder section="Moderation" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/admin/analytics"
             element={
               <ProtectedRoute allowedRoles={['ADMIN']}>
@@ -160,9 +169,10 @@ export function App() {
             }
           />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
-      </Routes>
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }

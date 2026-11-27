@@ -1,6 +1,7 @@
-import { Profile, UserRole } from '../../types';
+import { Profile, RegistrationInput, UserRole } from '../../types';
 import { DEMO_USERS } from '../../data/mockData';
 import { isSupabaseConfigured, supabase } from '../../lib/supabase/client';
+import { toProfile } from '../../lib/supabase/mappers';
 
 export type PublicLoginRole = 'STUDENT' | 'ALUMNI' | 'LECTURER';
 
@@ -13,6 +14,7 @@ export interface AuthResult {
   success: boolean;
   user?: Profile;
   error?: string;
+  requiresEmailConfirmation?: boolean;
 }
 
 export interface DemoLoginAccount {
@@ -86,6 +88,9 @@ export const authService = {
 
     // Production Supabase path when configured
     if (isSupabaseConfigured && supabase) {
+      if (!identifier.includes('@')) {
+        return { success: false, error: 'Use your university email address to sign in.' };
+      }
       const { data, error } = await supabase.auth.signInWithPassword({
         email: identifier,
         password
@@ -93,14 +98,19 @@ export const authService = {
       if (error || !data.user) {
         return { success: false, error: error?.message || 'Invalid account ID or password.' };
       }
-      const { data: profileData } = await supabase
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', data.user.id)
-        .single();
+        .eq('auth_user_id', data.user.id)
+        .maybeSingle();
       if (profileData) {
-        return { success: true, user: profileData as Profile };
+        return { success: true, user: toProfile(profileData) };
       }
+      await supabase.auth.signOut();
+      return {
+        success: false,
+        error: profileError?.message || 'Your account is missing a CAMPLY profile. Please contact an administrator.'
+      };
     }
 
     // Prototype mock authentication. Role is inferred from the verified account,
@@ -127,7 +137,64 @@ export const authService = {
     };
   },
 
-  async registerMember(profileData: Partial<Profile>): Promise<AuthResult> {
+  async registerMember(profileData: RegistrationInput): Promise<AuthResult> {
+    const email = profileData.email.trim().toLowerCase();
+
+    if (!profileData.full_name.trim() || !email || !profileData.password) {
+      return { success: false, error: 'Name, email, and password are required.' };
+    }
+
+    if (profileData.password.length < 8) {
+      return { success: false, error: 'Use a password with at least 8 characters.' };
+    }
+
+    if (isSupabaseConfigured && supabase) {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password: profileData.password,
+        options: {
+          data: {
+            full_name: profileData.full_name.trim(),
+            requested_role: profileData.role,
+            university: profileData.university,
+            faculty: profileData.faculty,
+            major: profileData.major,
+            student_id: profileData.student_id,
+            enrollment_year: profileData.enrollment_year,
+            expected_graduation_year: profileData.expected_graduation_year,
+            graduation_year: profileData.graduation_year,
+            current_company: profileData.current_company,
+            current_position: profileData.current_position,
+            department: profileData.department,
+            lecturer_id: profileData.lecturer_id
+          }
+        }
+      });
+
+      if (error || !data.user) {
+        return { success: false, error: error?.message || 'Unable to create your account.' };
+      }
+
+      const { data: profileDataFromDb, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('auth_user_id', data.user.id)
+        .maybeSingle();
+
+      if (!profileDataFromDb) {
+        return {
+          success: false,
+          error: profileError?.message || 'Your account was created, but its profile is not ready yet. Please sign in again.'
+        };
+      }
+
+      return {
+        success: true,
+        user: toProfile(profileDataFromDb),
+        requiresEmailConfirmation: !data.session
+      };
+    }
+
     await new Promise((r) => setTimeout(r, 350));
 
     // Strictly prevent self-registration as ADMIN
@@ -139,15 +206,11 @@ export const authService = {
     const newUser: Profile = {
       id: `user-${Date.now()}`,
       full_name: profileData.full_name || 'New Member',
-      email: profileData.email || 'user@camply.edu',
+      email,
       role: requestedRole,
-      avatar_url:
-        profileData.avatar_url ||
-        'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=256&auto=format&fit=crop&q=80',
-      headline:
-        profileData.headline ||
-        `${requestedRole.charAt(0) + requestedRole.slice(1).toLowerCase()} at ${profileData.university || 'Campus'}`,
-      bio: profileData.bio || 'Recently joined CAMPLY network.',
+      avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=256&auto=format&fit=crop&q=80',
+      headline: `${requestedRole.charAt(0) + requestedRole.slice(1).toLowerCase()} at ${profileData.university || 'Campus'}`,
+      bio: 'Recently joined CAMPLY network.',
       university: profileData.university || 'Universitas Indonesia',
       faculty: profileData.faculty,
       major: profileData.major,
@@ -160,12 +223,20 @@ export const authService = {
       current_position: requestedRole === 'ALUMNI' ? profileData.current_position : undefined,
       department: requestedRole === 'LECTURER' ? profileData.department : undefined,
       lecturer_id: requestedRole === 'LECTURER' ? profileData.lecturer_id : undefined,
-      skills: profileData.skills || ['Communication', 'Teamwork'],
+      skills: ['Communication', 'Teamwork'],
       connections_count: 1,
       mutual_connections: 0,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      requested_role: requestedRole,
+      verification_status: 'VERIFIED'
     };
 
     return { success: true, user: newUser };
+  },
+
+  async signOut(): Promise<void> {
+    if (isSupabaseConfigured && supabase) {
+      await supabase.auth.signOut();
+    }
   }
 };

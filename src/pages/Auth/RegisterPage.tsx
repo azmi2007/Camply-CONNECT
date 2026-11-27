@@ -4,7 +4,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { Button } from '../../components/ui/Button';
 import { RoleBadge } from '../../components/ui/RoleBadge';
 import { CamplyMark } from '../../components/ui/CamplyMark';
-import { UserRole } from '../../types';
+import { PublicRegistrationRole } from '../../types';
 import { 
   ArrowRight, 
   ArrowLeft, 
@@ -23,7 +23,7 @@ export const RegisterPage: React.FC = () => {
   const { register } = useAuthStore();
 
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const [role, setRole] = useState<UserRole>('STUDENT');
+  const [role, setRole] = useState<PublicRegistrationRole>('STUDENT');
 
   // Step 2: Personal Info
   const [fullName, setFullName] = useState('');
@@ -50,6 +50,9 @@ export const RegisterPage: React.FC = () => {
   const [lecturerId, setLecturerId] = useState('LEC-88192');
 
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [requiresEmailConfirmation, setRequiresEmailConfirmation] = useState(false);
+  const [isRoleVerificationPending, setIsRoleVerificationPending] = useState(false);
 
   const handleNext = () => {
     if (step === 1) setStep(2);
@@ -62,11 +65,13 @@ export const RegisterPage: React.FC = () => {
   };
 
   const handleCompleteRegistration = async () => {
+    setError(null);
     setIsLoading(true);
     try {
-      await register({
+      const result = await register({
         full_name: fullName,
         email,
+        password,
         role,
         university,
         faculty,
@@ -81,12 +86,19 @@ export const RegisterPage: React.FC = () => {
         lecturer_id: role === 'LECTURER' ? lecturerId : undefined
       });
 
+      if (!result.success) {
+        setError(result.error || 'Unable to create your account.');
+        return;
+      }
+
       confetti({
         particleCount: 80,
         spread: 90,
         origin: { y: 0.6 }
       });
 
+      setRequiresEmailConfirmation(Boolean(result.requiresEmailConfirmation));
+      setIsRoleVerificationPending(result.user?.verification_status === 'PENDING');
       setStep(4);
     } finally {
       setIsLoading(false);
@@ -370,6 +382,11 @@ export const RegisterPage: React.FC = () => {
                 <p className="text-xs sm:text-sm text-neutral-500 mt-1">
                   Fill in your role-specific verification details.
                 </p>
+              {error && (
+                <p role="alert" className="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-700">
+                  {error}
+                </p>
+              )}
               </div>
 
               <div>
@@ -538,16 +555,20 @@ export const RegisterPage: React.FC = () => {
                 Account Created Successfully!
               </h2>
               <p className="text-xs sm:text-sm text-neutral-500 mt-2 max-w-xs mb-6">
-                Welcome to CAMPLY. Your verified {role.toLowerCase()} profile is active and ready to explore.
+                {requiresEmailConfirmation
+                  ? 'Check your email to confirm your account, then sign in to finish setting up your profile.'
+                  : isRoleVerificationPending
+                  ? `Your account is active as a student while your ${role.toLowerCase()} role request is reviewed.`
+                  : `Welcome to CAMPLY. Your ${role.toLowerCase()} profile is active and ready to explore.`}
               </p>
               <Button
                 variant="primary"
                 size="lg"
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate(requiresEmailConfirmation ? '/login' : '/dashboard')}
                 icon={<ArrowRight className="w-4 h-4" />}
                 className="w-full"
               >
-                Go to Role Dashboard
+                {requiresEmailConfirmation ? 'Go to Sign In' : 'Go to Role Dashboard'}
               </Button>
             </div>
           )}

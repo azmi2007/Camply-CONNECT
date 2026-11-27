@@ -1,6 +1,7 @@
 import { create } from 'zustand';
-import { EventItem, EventCategory } from '../types';
-import { INITIAL_EVENTS } from '../data/mockData';
+import { CreateEventInput, EventItem, EventCategory } from '../types';
+import { createMockEvents } from '../data/mockState';
+import { useAuthStore } from './useAuthStore';
 
 interface EventState {
   events: EventItem[];
@@ -13,7 +14,7 @@ interface EventState {
   registerEvent: (eventId: string) => void;
   cancelRegistration: (eventId: string) => void;
   toggleSaveEvent: (eventId: string) => void;
-  createEvent: (eventData: Omit<EventItem, 'id' | 'current_participants' | 'status'>) => EventItem;
+  createEvent: (eventData: CreateEventInput) => EventItem | null;
 }
 
 const STORAGE_KEY = 'camply_events';
@@ -25,7 +26,7 @@ const getInitialEvents = (): EventItem[] => {
   } catch (e) {
     // fallback
   }
-  return INITIAL_EVENTS;
+  return createMockEvents();
 };
 
 export const useEventStore = create<EventState>((set, get) => ({
@@ -39,6 +40,7 @@ export const useEventStore = create<EventState>((set, get) => ({
   setSearchQuery: (query) => set({ searchQuery: query }),
 
   registerEvent: (eventId) => {
+    if (!useAuthStore.getState().isAuthenticated) return;
     set((state) => {
       const updated = state.events.map((e) => {
         if (e.id === eventId) {
@@ -56,6 +58,7 @@ export const useEventStore = create<EventState>((set, get) => ({
   },
 
   cancelRegistration: (eventId) => {
+    if (!useAuthStore.getState().isAuthenticated) return;
     set((state) => {
       const updated = state.events.map((e) => {
         if (e.id === eventId) {
@@ -73,6 +76,7 @@ export const useEventStore = create<EventState>((set, get) => ({
   },
 
   toggleSaveEvent: (eventId) => {
+    if (!useAuthStore.getState().isAuthenticated) return;
     set((state) => {
       const updated = state.events.map((e) => {
         if (e.id === eventId) {
@@ -86,6 +90,9 @@ export const useEventStore = create<EventState>((set, get) => ({
   },
 
   createEvent: (eventData) => {
+    if (!useAuthStore.getState().isAuthenticated) {
+      return null;
+    }
     const newEvent: EventItem = {
       ...eventData,
       id: `event-${Date.now()}`,

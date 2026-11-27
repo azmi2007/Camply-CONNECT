@@ -19,6 +19,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { RoleBadge } from '../../components/ui/RoleBadge';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
+import { useRequireAuthentication } from '../../features/auth/useRequireAuthentication';
 import confetti from 'canvas-confetti';
 
 export const AlumniProfilePage: React.FC = () => {
@@ -35,6 +36,7 @@ export const AlumniProfilePage: React.FC = () => {
     sendMessageToMember
   } = useCommunityStore();
   const currentUser = useAuthStore((state) => state.user);
+  const requireAuthentication = useRequireAuthentication();
 
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
   const [isMutualModalOpen, setIsMutualModalOpen] = useState(false);
@@ -66,6 +68,7 @@ export const AlumniProfilePage: React.FC = () => {
   const conversationMessages = messages.filter((m) => m.recipientId === profile.id);
 
   const handleConnect = () => {
+    if (!requireAuthentication()) return;
     if (isOwnProfile || isConnected || isPending) return;
     sendConnectionRequest(profile.id);
     confetti({ particleCount: 50, spread: 65, origin: { y: 0.6 } });
@@ -73,6 +76,10 @@ export const AlumniProfilePage: React.FC = () => {
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!requireAuthentication()) {
+      setIsMessageModalOpen(false);
+      return;
+    }
     if (isOwnProfile || !messageText.trim()) return;
     sendMessageToMember(profile.id, messageText.trim());
     setMessageText('');
@@ -158,7 +165,9 @@ export const AlumniProfilePage: React.FC = () => {
                   <Button
                     variant="secondary"
                     size="md"
-                    onClick={() => setIsMessageModalOpen(true)}
+                    onClick={() => {
+                      if (requireAuthentication()) setIsMessageModalOpen(true);
+                    }}
                     icon={<MessageSquare className="w-4 h-4" />}
                   >
                     Message
@@ -167,7 +176,9 @@ export const AlumniProfilePage: React.FC = () => {
                   <Button
                     variant={isFollowing ? 'accent' : 'outline'}
                     size="md"
-                    onClick={() => toggleFollow(profile.id)}
+                    onClick={() => {
+                      if (requireAuthentication()) toggleFollow(profile.id);
+                    }}
                   >
                     {isFollowing ? 'Following ✓' : 'Follow'}
                   </Button>

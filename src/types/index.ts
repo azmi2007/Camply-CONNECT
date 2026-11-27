@@ -1,27 +1,36 @@
+/** Shared domain contracts. API mappers convert Supabase rows into these UI models. */
+export type EntityId = string;
+export type ISODateString = string;
 export type UserRole = 'STUDENT' | 'ALUMNI' | 'LECTURER' | 'ADMIN';
 
-export type EventCategory = 
-  | 'All Events'
-  | 'Academic' 
-  | 'Workshop' 
-  | 'Seminar' 
-  | 'Webinar' 
-  | 'Networking' 
-  | 'Career Fair' 
-  | 'Campus Gathering' 
-  | 'Competition';
+export const EVENT_CATEGORIES = [
+  'Academic',
+  'Workshop',
+  'Seminar',
+  'Webinar',
+  'Networking',
+  'Career Fair',
+  'Campus Gathering',
+  'Competition'
+] as const;
+export type EventCategory = 'All Events' | (typeof EVENT_CATEGORIES)[number];
+export type PersistedEventCategory = Exclude<EventCategory, 'All Events'>;
 
-export type JobType = 
-  | 'Internship' 
-  | 'Full-time' 
-  | 'Part-time' 
-  | 'Freelance' 
-  | 'Remote';
+export const JOB_TYPES = ['Internship', 'Full-time', 'Part-time', 'Freelance', 'Remote'] as const;
+export type JobType = (typeof JOB_TYPES)[number];
 
-export type WorkMode = 'Remote' | 'Hybrid' | 'On-site';
+export const WORK_MODES = ['Remote', 'Hybrid', 'On-site'] as const;
+export type WorkMode = (typeof WORK_MODES)[number];
+
+export type EventStatus = 'UPCOMING' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
+export type JobStatus = 'ACTIVE' | 'CLOSED';
+export type MentorshipStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COMPLETED';
+export type ConnectionStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED';
+export type VerificationStatus = 'UNVERIFIED' | 'PENDING' | 'VERIFIED' | 'REJECTED';
+export type PublicRegistrationRole = Exclude<UserRole, 'ADMIN'>;
 
 export interface ExperienceItem {
-  id: string;
+  id: EntityId;
   role: string;
   company: string;
   duration: string;
@@ -30,7 +39,7 @@ export interface ExperienceItem {
 }
 
 export interface EducationItem {
-  id: string;
+  id: EntityId;
   institution: string;
   degree: string;
   field: string;
@@ -38,7 +47,7 @@ export interface EducationItem {
 }
 
 export interface Profile {
-  id: string;
+  id: EntityId;
   full_name: string;
   email: string;
   role: UserRole;
@@ -88,11 +97,33 @@ export interface Profile {
   linkedin_url?: string;
   github_url?: string;
   portfolio_url?: string;
-  created_at?: string;
+  created_at?: ISODateString;
+  updated_at?: ISODateString;
+  requested_role?: PublicRegistrationRole;
+  verification_status?: VerificationStatus;
+}
+
+/** Data collected by onboarding. Passwords never belong to a persisted Profile. */
+export interface RegistrationInput {
+  full_name: string;
+  email: string;
+  password: string;
+  role: PublicRegistrationRole;
+  university?: string;
+  faculty?: string;
+  major?: string;
+  student_id?: string;
+  enrollment_year?: number;
+  expected_graduation_year?: number;
+  graduation_year?: number;
+  current_company?: string;
+  current_position?: string;
+  department?: string;
+  lecturer_id?: string;
 }
 
 export interface University {
-  id: string;
+  id: EntityId;
   name: string;
   short_name: string;
   logo_url: string;
@@ -101,7 +132,7 @@ export interface University {
 }
 
 export interface FacultyInfo {
-  id: string;
+  id: EntityId;
   name: string;
   short_name: string;
   category_key: string;
@@ -115,7 +146,7 @@ export interface FacultyInfo {
 }
 
 export interface Company {
-  id: string;
+  id: EntityId;
   name: string;
   logo_url: string;
   industry: string;
@@ -126,8 +157,8 @@ export interface Company {
 }
 
 export interface EventItem {
-  id: string;
-  organizer_id: string;
+  id: EntityId;
+  organizer_id: EntityId;
   organizer?: {
     full_name: string;
     avatar_url: string;
@@ -140,7 +171,7 @@ export interface EventItem {
   banner_url: string;
   category: EventCategory;
   faculty?: string;
-  event_date: string; // YYYY-MM-DD
+  event_date: ISODateString; // YYYY-MM-DD
   start_time: string; // HH:mm
   end_time: string; // HH:mm
   location: string;
@@ -149,18 +180,24 @@ export interface EventItem {
   registration_deadline?: string;
   max_participants: number;
   current_participants: number;
-  status: 'UPCOMING' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
+  status: EventStatus;
   is_featured?: boolean;
   tags: string[];
   is_registered?: boolean;
   is_saved?: boolean;
 }
 
+/** Payload accepted when an organizer publishes an event. */
+export type CreateEventInput = Omit<
+  EventItem,
+  'id' | 'current_participants' | 'status' | 'is_registered' | 'is_saved'
+>;
+
 export interface JobVacancy {
-  id: string;
-  company_id: string;
+  id: EntityId;
+  company_id: EntityId;
   company: Company;
-  poster_id: string;
+  poster_id: EntityId;
   poster?: {
     full_name: string;
     role: UserRole;
@@ -176,46 +213,53 @@ export interface JobVacancy {
   salary_range?: string;
   deadline: string;
   application_url?: string;
-  status: 'ACTIVE' | 'CLOSED';
-  created_at: string;
+  status: JobStatus;
+  created_at: ISODateString;
+  updated_at?: ISODateString;
   is_saved?: boolean;
   is_applied?: boolean;
 }
 
+/** Payload accepted when a member publishes a career opportunity. */
+export type CreateJobInput = Omit<
+  JobVacancy,
+  'id' | 'status' | 'created_at' | 'updated_at' | 'is_saved' | 'is_applied'
+>;
+
 export interface MentorshipRequest {
-  id: string;
-  student_id: string;
+  id: EntityId;
+  student_id: EntityId;
   student?: Profile;
-  mentor_id: string;
+  mentor_id: EntityId;
   mentor?: Profile;
   topic: string;
   message: string;
   preferred_schedule?: string;
-  preferredSchedule?: string;
-  status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COMPLETED';
-  created_at: string;
+  status: MentorshipStatus;
+  created_at: ISODateString;
+  updated_at?: ISODateString;
 }
 
 export interface ConnectionRequest {
-  id: string;
-  sender_id: string;
+  id: EntityId;
+  sender_id: EntityId;
   sender?: Profile;
-  receiver_id: string;
+  receiver_id: EntityId;
   receiver?: Profile;
-  status: 'PENDING' | 'ACCEPTED' | 'REJECTED';
+  status: ConnectionStatus;
   note?: string;
-  created_at: string;
+  created_at: ISODateString;
 }
 
 export interface NotificationItem {
-  id: string;
-  user_id: string;
+  id: EntityId;
+  user_id: EntityId;
   title: string;
   message: string;
   type: 'CONNECTION' | 'EVENT' | 'JOB' | 'MENTORSHIP' | 'SYSTEM';
   link?: string;
   is_read: boolean;
-  created_at: string;
+  created_at: ISODateString;
 }
 
 export interface PlatformStats {

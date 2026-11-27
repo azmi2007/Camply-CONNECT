@@ -32,6 +32,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { EventCategory } from '../../types';
 import { Button } from '../../components/ui/Button';
 import { CreateEventModal } from '../../components/forms/CreateEventModal';
+import { useRequireAuthentication } from '../../features/auth/useRequireAuthentication';
 import { cn } from '../../lib/utils';
 
 type CalendarView = 'month' | 'week' | 'agenda';
@@ -40,6 +41,7 @@ export const CalendarPage: React.FC = () => {
   const navigate = useNavigate();
   const { events, selectedCategory, setSelectedCategory, registerEvent, cancelRegistration } = useEventStore();
   const { user } = useAuthStore();
+  const requireAuthentication = useRequireAuthentication();
 
   const todayDate = useMemo(() => new Date(2026, 10, 26), []);
   const [cursorDate, setCursorDate] = useState(todayDate);
@@ -403,6 +405,7 @@ export const CalendarPage: React.FC = () => {
                     size="sm"
                     onClick={(e) => {
                       e.stopPropagation();
+                      if (!requireAuthentication()) return;
                       if (ev.is_registered) cancelRegistration(ev.id);
                       else registerEvent(ev.id);
                     }}

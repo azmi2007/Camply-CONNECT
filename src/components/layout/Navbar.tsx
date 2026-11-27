@@ -112,8 +112,8 @@ export const Navbar: React.FC = () => {
                   <span className="hidden md:inline text-[#929292]">Search campus...</span>
                 </button>
 
-                {/* Notifications */}
-                <NotificationDropdown />
+                {/* Notifications belong to the signed-in member workspace. */}
+                {isAuthenticated && <NotificationDropdown />}
               </>
             )}
 

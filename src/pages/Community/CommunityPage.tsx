@@ -16,6 +16,7 @@ import {
   Building2
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { useRequireAuthentication } from '../../features/auth/useRequireAuthentication';
 
 type CommunityTab = 'All' | 'STUDENT' | 'ALUMNI' | 'LECTURER' | 'INNOVATORS';
 
@@ -24,6 +25,7 @@ export const CommunityPage: React.FC = () => {
   const navigate = useNavigate();
   const { members, sentRequestIds, connectedIds, sendConnectionRequest } = useCommunityStore();
   const currentUser = useAuthStore((state) => state.user);
+  const requireAuthentication = useRequireAuthentication();
 
   const initialFaculty = searchParams.get('faculty') || 'All';
 
@@ -146,6 +148,7 @@ export const CommunityPage: React.FC = () => {
 
   const handleConnect = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
+    if (!requireAuthentication()) return;
     if (currentUser?.id === id) return;
     sendConnectionRequest(id);
     confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });

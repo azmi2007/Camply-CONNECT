@@ -3,6 +3,7 @@ import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { Profile } from '../../types';
 import { useMentorshipStore } from '../../store/useMentorshipStore';
+import { useRequireAuthentication } from '../../features/auth/useRequireAuthentication';
 import confetti from 'canvas-confetti';
 
 interface RequestMentorshipModalProps {
@@ -17,6 +18,7 @@ export const RequestMentorshipModal: React.FC<RequestMentorshipModalProps> = ({
   mentor
 }) => {
   const { sendMentorshipRequest } = useMentorshipStore();
+  const requireAuthentication = useRequireAuthentication();
 
   const [topic, setTopic] = useState('Career Transition & Portfolio Feedback');
   const [schedule, setSchedule] = useState('Thursday 4:00 PM (Google Meet)');
@@ -26,6 +28,10 @@ export const RequestMentorshipModal: React.FC<RequestMentorshipModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!requireAuthentication()) {
+      onClose();
+      return;
+    }
     if (!message) return;
 
     sendMentorshipRequest({
