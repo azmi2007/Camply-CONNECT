@@ -4,6 +4,7 @@ import { Button } from '../ui/Button';
 import { JobType } from '../../types';
 import { useCareerStore } from '../../store/useCareerStore';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useRequireAuthentication } from '../../features/auth/useRequireAuthentication';
 import confetti from 'canvas-confetti';
 
 interface PostJobModalProps {
@@ -14,6 +15,7 @@ interface PostJobModalProps {
 export const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
   const { postJob } = useCareerStore();
   const { user } = useAuthStore();
+  const requireAuthentication = useRequireAuthentication();
 
   const [title, setTitle] = useState('');
   const [companyName, setCompanyName] = useState('Acme Tech Ventures');
@@ -29,6 +31,10 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) =
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!requireAuthentication() || !user) {
+      onClose();
+      return;
+    }
     if (!title || !companyName || !description) return;
 
     postJob({
@@ -43,11 +49,11 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) =
         location,
         website: applicationUrl
       },
-      poster_id: user?.id || 'demo-poster',
+      poster_id: user.id,
       poster: {
-        full_name: user?.full_name || 'Hiring Manager',
-        role: user?.role || 'ALUMNI',
-        avatar_url: user?.avatar_url || 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=256'
+        full_name: user.full_name,
+        role: user.role,
+        avatar_url: user.avatar_url
       },
       title,
       description,

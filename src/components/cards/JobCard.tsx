@@ -3,6 +3,7 @@ import { MapPin, Bookmark, Check, Calendar, ArrowUpRight, Laptop } from 'lucide-
 import { JobVacancy } from '../../types';
 import { formatDate } from '../../lib/utils';
 import { useCareerStore } from '../../store/useCareerStore';
+import { useRequireAuthentication } from '../../features/auth/useRequireAuthentication';
 import confetti from 'canvas-confetti';
 
 interface JobCardProps {
@@ -13,9 +14,11 @@ interface JobCardProps {
 
 export const JobCard: React.FC<JobCardProps> = ({ job, onApply, onViewDetails }) => {
   const { toggleSaveJob, applyJob } = useCareerStore();
+  const requireAuthentication = useRequireAuthentication();
 
   const handleApply = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!requireAuthentication()) return;
     if (job.is_applied) return;
     applyJob(job.id);
     confetti({
@@ -28,6 +31,7 @@ export const JobCard: React.FC<JobCardProps> = ({ job, onApply, onViewDetails })
 
   const handleSave = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!requireAuthentication()) return;
     toggleSaveJob(job.id);
   };
 

@@ -15,6 +15,7 @@ import { RoleBadge } from '../../components/ui/RoleBadge';
 import { useEventStore } from '../../store/useEventStore';
 import { useCareerStore } from '../../store/useCareerStore';
 import { useCommunityStore } from '../../store/useCommunityStore';
+import { useRequireAuthentication } from '../../features/auth/useRequireAuthentication';
 import { JobVacancy } from '../../types';
 import {
   ArrowRight,
@@ -33,6 +34,7 @@ export const HomePage: React.FC = () => {
   const { events } = useEventStore();
   const { jobs, applyJob } = useCareerStore();
   const { members } = useCommunityStore();
+  const requireAuthentication = useRequireAuthentication();
 
   const [selectedDiscipline, setSelectedDiscipline] = useState('All');
   const [isCreateEventOpen, setIsCreateEventOpen] = useState(false);
@@ -408,6 +410,7 @@ export const HomePage: React.FC = () => {
                 variant={selectedJobModal.is_applied ? 'secondary' : 'primary'}
                 size="md"
                 onClick={() => {
+                  if (!requireAuthentication()) return;
                   applyJob(selectedJobModal.id);
                   setSelectedJobModal(null);
                 }}

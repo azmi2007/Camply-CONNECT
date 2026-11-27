@@ -16,6 +16,7 @@ import { useEventStore } from '../../store/useEventStore';
 import { Button } from '../../components/ui/Button';
 import { RoleBadge } from '../../components/ui/RoleBadge';
 import { EventCard } from '../../components/cards/EventCard';
+import { useRequireAuthentication } from '../../features/auth/useRequireAuthentication';
 import { formatDate } from '../../lib/utils';
 import confetti from 'canvas-confetti';
 
@@ -23,6 +24,7 @@ export const EventDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { events, registerEvent, cancelRegistration, toggleSaveEvent } = useEventStore();
+  const requireAuthentication = useRequireAuthentication();
 
   const event = events.find((e) => e.id === id);
 
@@ -45,6 +47,7 @@ export const EventDetailPage: React.FC = () => {
   const relatedEvents = events.filter((e) => e.id !== event.id).slice(0, 2);
 
   const handleToggleRegister = () => {
+    if (!requireAuthentication()) return;
     if (event.is_registered) {
       cancelRegistration(event.id);
     } else {
@@ -249,7 +252,9 @@ export const EventDetailPage: React.FC = () => {
                 <Button
                   variant="outline"
                   size="md"
-                  onClick={() => toggleSaveEvent(event.id)}
+                  onClick={() => {
+                    if (requireAuthentication()) toggleSaveEvent(event.id);
+                  }}
                   icon={<Bookmark className={`w-4 h-4 ${event.is_saved ? 'fill-[#111111]' : ''}`} />}
                 >
                   {event.is_saved ? 'Saved' : 'Save'}

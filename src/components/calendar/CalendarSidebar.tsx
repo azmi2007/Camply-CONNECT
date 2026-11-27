@@ -23,6 +23,7 @@ import {
 } from 'date-fns';
 import { useEventStore } from '../../store/useEventStore';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useRequireAuthentication } from '../../features/auth/useRequireAuthentication';
 import { EventCategory, EventItem } from '../../types';
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/Button';
@@ -49,6 +50,7 @@ export const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
   } = useEventStore();
 
   const { user } = useAuthStore();
+  const requireAuthentication = useRequireAuthentication();
 
   // Anchored on Nov 2026 (matches current mock events & local time)
   const todayDate = useMemo(() => new Date(2026, 10, 26), []);
@@ -109,6 +111,7 @@ export const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
 
   const handleRegister = (e: React.MouseEvent, eventId: string, isRegistered?: boolean) => {
     e.stopPropagation();
+    if (!requireAuthentication()) return;
     if (isRegistered) {
       cancelRegistration(eventId);
     } else {

@@ -947,7 +947,7 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     type: 'MENTORSHIP',
     link: '/mentorship',
     is_read: false,
-    created_at: '10m ago'
+    created_at: '2026-11-27T05:50:00Z'
   },
   {
     id: 'notif-02',
@@ -957,7 +957,7 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     type: 'EVENT',
     link: '/events/event-01',
     is_read: false,
-    created_at: '1h ago'
+    created_at: '2026-11-27T04:00:00Z'
   },
   {
     id: 'notif-03',
@@ -967,7 +967,7 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     type: 'JOB',
     link: '/careers',
     is_read: true,
-    created_at: '5h ago'
+    created_at: '2026-11-27T00:00:00Z'
   }
 ];
 

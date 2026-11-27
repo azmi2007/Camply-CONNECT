@@ -4,6 +4,7 @@ import { EventItem } from '../../types';
 import { RoleBadge } from '../ui/RoleBadge';
 import { formatDate } from '../../lib/utils';
 import { useEventStore } from '../../store/useEventStore';
+import { useRequireAuthentication } from '../../features/auth/useRequireAuthentication';
 import confetti from 'canvas-confetti';
 
 interface EventCardProps {
@@ -13,9 +14,11 @@ interface EventCardProps {
 
 export const EventCard: React.FC<EventCardProps> = ({ event, onSelect }) => {
   const { registerEvent, cancelRegistration, toggleSaveEvent } = useEventStore();
+  const requireAuthentication = useRequireAuthentication();
 
   const handleRegister = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!requireAuthentication()) return;
     if (event.is_registered) {
       cancelRegistration(event.id);
     } else {
@@ -30,6 +33,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onSelect }) => {
 
   const handleSave = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!requireAuthentication()) return;
     toggleSaveEvent(event.id);
   };
 

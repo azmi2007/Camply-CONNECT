@@ -4,6 +4,7 @@ import { Button } from '../ui/Button';
 import { EventCategory } from '../../types';
 import { useEventStore } from '../../store/useEventStore';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useRequireAuthentication } from '../../features/auth/useRequireAuthentication';
 import confetti from 'canvas-confetti';
 
 interface CreateEventModalProps {
@@ -14,6 +15,7 @@ interface CreateEventModalProps {
 export const CreateEventModal: React.FC<CreateEventModalProps> = ({ isOpen, onClose }) => {
   const { createEvent } = useEventStore();
   const { user } = useAuthStore();
+  const requireAuthentication = useRequireAuthentication();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -41,15 +43,19 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ isOpen, onCl
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!requireAuthentication() || !user) {
+      onClose();
+      return;
+    }
     if (!title || !description || !eventDate) return;
 
     createEvent({
-      organizer_id: user?.id || 'demo-organizer',
+      organizer_id: user.id,
       organizer: {
-        full_name: user?.full_name || 'Event Organizer',
-        avatar_url: user?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=256',
-        role: user?.role || 'STUDENT',
-        faculty: user?.faculty || 'Computer Science'
+        full_name: user.full_name,
+        avatar_url: user.avatar_url,
+        role: user.role,
+        faculty: user.faculty
       },
       title,
       description,

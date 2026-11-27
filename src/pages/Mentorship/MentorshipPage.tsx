@@ -7,11 +7,13 @@ import { RequestMentorshipModal } from '../../components/forms/RequestMentorship
 import { Profile } from '../../types';
 import { Search, Sparkles, CheckCircle2, Clock, Calendar, MessageSquare } from 'lucide-react';
 import { formatDate } from '../../lib/utils';
+import { useRequireAuthentication } from '../../features/auth/useRequireAuthentication';
 
 export const MentorshipPage: React.FC = () => {
   const { members } = useCommunityStore();
   const { requests } = useMentorshipStore();
   const { user } = useAuthStore();
+  const requireAuthentication = useRequireAuthentication();
 
   const [search, setSearch] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('All');
@@ -102,10 +104,10 @@ export const MentorshipPage: React.FC = () => {
                     "{req.message}"
                   </p>
                 </div>
-                {req.preferredSchedule && (
+                {req.preferred_schedule && (
                   <div className="text-[11px] text-neutral-600 font-medium pt-2 border-t border-neutral-200/60 flex items-center gap-1.5">
                     <Calendar className="w-3 h-3 text-neutral-400" />
-                    <span>{req.preferredSchedule}</span>
+                    <span>{req.preferred_schedule}</span>
                   </div>
                 )}
               </div>
@@ -150,7 +152,9 @@ export const MentorshipPage: React.FC = () => {
           <MentorCard
             key={mentor.id}
             mentor={mentor}
-            onRequestMentorship={(m) => setSelectedMentor(m)}
+            onRequestMentorship={(m) => {
+              if (requireAuthentication()) setSelectedMentor(m);
+            }}
           />
         ))}
       </div>

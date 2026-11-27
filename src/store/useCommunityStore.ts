@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Profile, NotificationItem } from '../types';
-import { INITIAL_MEMBERS, INITIAL_NOTIFICATIONS } from '../data/mockData';
+import { createMockMembers, createMockNotifications } from '../data/mockState';
 import { useAuthStore } from './useAuthStore';
 
 export interface DirectMessage {
@@ -34,17 +34,18 @@ interface CommunityState {
 }
 
 export const useCommunityStore = create<CommunityState>((set) => ({
-  members: INITIAL_MEMBERS,
+  members: createMockMembers(),
   sentRequestIds: [],
   connectedIds: ['user-alumni-01'], // Sarah is connected initially
   followingIds: ['user-alumni-01', 'user-lecturer-01'],
   messages: [],
-  notifications: INITIAL_NOTIFICATIONS,
+  notifications: createMockNotifications(),
   searchQuery: '',
   selectedFaculty: 'All',
   selectedRole: 'All',
 
   sendConnectionRequest: (targetMemberId: string) => {
+    if (!useAuthStore.getState().isAuthenticated) return;
     set((state) => {
       const currentUserId = getCurrentUserId();
       if (currentUserId && targetMemberId === currentUserId) return state;
@@ -58,6 +59,7 @@ export const useCommunityStore = create<CommunityState>((set) => ({
   },
 
   acceptConnection: (targetMemberId: string) => {
+    if (!useAuthStore.getState().isAuthenticated) return;
     set((state) => {
       const currentUserId = getCurrentUserId();
       if (currentUserId && targetMemberId === currentUserId) return state;
@@ -71,6 +73,7 @@ export const useCommunityStore = create<CommunityState>((set) => ({
   },
 
   toggleFollow: (targetMemberId: string) => {
+    if (!useAuthStore.getState().isAuthenticated) return;
     set((state) => {
       const currentUserId = getCurrentUserId();
       if (currentUserId && targetMemberId === currentUserId) return state;
@@ -83,6 +86,7 @@ export const useCommunityStore = create<CommunityState>((set) => ({
   },
 
   sendMessageToMember: (recipientId: string, text: string) => {
+    if (!useAuthStore.getState().isAuthenticated) return;
     set((state) => {
       const currentUserId = getCurrentUserId();
       if (currentUserId && recipientId === currentUserId) return state;

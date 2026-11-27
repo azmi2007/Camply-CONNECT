@@ -1,6 +1,7 @@
 import { create } from 'zustand';
-import { JobVacancy, JobType } from '../types';
-import { INITIAL_JOBS } from '../data/mockData';
+import { CreateJobInput, JobVacancy, JobType } from '../types';
+import { createMockJobs } from '../data/mockState';
+import { useAuthStore } from './useAuthStore';
 
 interface CareerState {
   jobs: JobVacancy[];
@@ -10,7 +11,7 @@ interface CareerState {
   setSearchQuery: (query: string) => void;
   toggleSaveJob: (jobId: string) => void;
   applyJob: (jobId: string) => void;
-  postJob: (jobData: Omit<JobVacancy, 'id' | 'status' | 'created_at'>) => JobVacancy;
+  postJob: (jobData: CreateJobInput) => JobVacancy | null;
 }
 
 const STORAGE_KEY = 'camply_jobs';
@@ -22,7 +23,7 @@ const getInitialJobs = (): JobVacancy[] => {
   } catch (e) {
     // fallback
   }
-  return INITIAL_JOBS;
+  return createMockJobs();
 };
 
 export const useCareerStore = create<CareerState>((set) => ({
@@ -34,6 +35,7 @@ export const useCareerStore = create<CareerState>((set) => ({
   setSearchQuery: (query) => set({ searchQuery: query }),
 
   toggleSaveJob: (jobId) => {
+    if (!useAuthStore.getState().isAuthenticated) return;
     set((state) => {
       const updated = state.jobs.map((j) => {
         if (j.id === jobId) {
@@ -47,6 +49,7 @@ export const useCareerStore = create<CareerState>((set) => ({
   },
 
   applyJob: (jobId) => {
+    if (!useAuthStore.getState().isAuthenticated) return;
     set((state) => {
       const updated = state.jobs.map((j) => {
         if (j.id === jobId) {
@@ -60,6 +63,9 @@ export const useCareerStore = create<CareerState>((set) => ({
   },
 
   postJob: (jobData) => {
+    if (!useAuthStore.getState().isAuthenticated) {
+      return null;
+    }
     const newJob: JobVacancy = {
       ...jobData,
       id: `job-${Date.now()}`,

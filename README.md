@@ -52,6 +52,17 @@
 
 ---
 
+## 2.1 Week 3 readiness
+
+- Every page is registered in React Router, including protected dashboards, admin sections, a compatibility redirect for `/admin-login`, and a 404 page. Page modules are lazy-loaded.
+- Zustand separates event, career, community, mentorship, and authentication state. Mock factories return independent copies, preventing a store from mutating a shared fixture.
+- Shared TypeScript contracts distinguish persisted entities from onboarding and create-form payloads. Mock timestamps use ISO 8601 values and are formatted only at render time.
+- The typed Supabase client activates only when its public environment variables are present; the application otherwise uses the local mock fallback.
+
+The layout uses mobile-first Tailwind breakpoints (`sm`, `md`, and `lg`) for page grids, headers, form rows, and navigation. Horizontal filters remain scrollable on narrow screens instead of forcing the page to overflow.
+
+---
+
 ## 3. Project Structure
 
 ```
@@ -104,6 +115,18 @@ camply/
 
 ---
 
+### Week 3 files at a glance
+
+| Area | Main files | Purpose |
+| :--- | :--- | :--- |
+| Routing | `src/App.tsx`, `src/pages/NotFoundPage.tsx` | Lazy-loaded page registration, role guards, redirects, and the 404 experience. |
+| Shared contracts | `src/types/index.ts` | Domain models plus explicit `RegistrationInput`, `CreateEventInput`, and `CreateJobInput` payloads. |
+| Client state | `src/store/*`, `src/data/mockState.ts` | Zustand state and clone-based mock factories. |
+| Supabase bridge | `src/lib/supabase/*` | Client initialization, generated-style database contract, and profile mappers. |
+| Database | `supabase/migrations/*` | Baseline schema followed by the Week 3 auth, relation, index, trigger, and RLS refinement. |
+
+---
+
 ## 4. Prerequisites
 
 - **Node.js**: `v18.0.0` or higher (Tested on Node `v24.x`)
@@ -149,16 +172,16 @@ camply/
 
 ## 6. Demo Accounts & Role-Based Access Control
 
-CAMPLY uses credential-based demo login on `/login` with strict role-based access control (`ProtectedRoute` and `PermissionGate`) and Dark/Light mode support. Admin accounts are private and accessed via `/admin-login` (not exposed in public registration or role selectors).
+CAMPLY uses credential-based demo login on `/login` with role-based access control (`ProtectedRoute` and `PermissionGate`) and Dark/Light mode support. Use the exact username/ID and password below. These accounts are available only while Supabase credentials are not configured.
 
-| Role | Identifier | Password | Dashboard Route |
+| Role | Username / ID | Password | Dashboard Route |
 | :--- | :--- | :--- | :--- |
-| **STUDENT** | `23100001` (NIM) or `alex.student@camply.edu` | `student123` | `/dashboard/student` |
-| **ALUMNI** | `alumni@camply.demo` or `ALM-2021-001` | `alumni123` | `/dashboard/alumni` |
-| **LECTURER** | `0012345678` (NIDN) or `marcus.lecturer@camply.edu` | `lecturer123` | `/dashboard/lecturer` |
-| **ADMIN** | Private administrator credentials via `/admin-login` | — | `/admin` |
+| **STUDENT** | `23100001` | `mahasiswa123` | `/dashboard/student` |
+| **ALUMNI** | `ALM-2021-001` | `alumni123` | `/dashboard/alumni` |
+| **LECTURER** | `DSN-001` | `dosen123` | `/dashboard/lecturer` |
+| **ADMIN** | `ADM-001` | `admin123` | `/admin` |
 
-> **Pro Tip:** On `/login`, select your campus role tab and click **Fill Demo Credentials** to test each role's authorized experience. Click the **CAMPLY** logo in the navbar to open the role-aware slide-in navigation sidebar.
+> **Pro Tip:** On `/login`, expand **Use a demo account** to auto-fill the Student, Alumni, or Lecturer account. Enter the Admin credentials manually; the Admin option is deliberately hidden from the public quick-fill menu.
 
 ---
 
@@ -168,7 +191,9 @@ When ready to connect to a live Supabase instance:
 
 1. Create a project at [supabase.com](https://supabase.com).
 2. Open the **SQL Editor** in your Supabase dashboard.
-3. Run the migration script in `supabase/migrations/20261113000000_create_camply_schema.sql`.
+3. Apply both migrations in filename order:
+   - `supabase/migrations/20261113000000_create_camply_schema.sql`
+   - `supabase/migrations/20261127000000_refine_backend_ready_schema.sql`
 4. (Optional) Run `supabase/seed.sql` to populate sample campus data.
 5. In your `.env.local` file, enter your credentials:
    ```env
@@ -176,8 +201,69 @@ When ready to connect to a live Supabase instance:
    VITE_SUPABASE_ANON_KEY=your-anon-key-here
    ```
 
+The refinement migration links `profiles` to Supabase Auth, creates a profile when a new account signs up, adds indexes and ownership-aware RLS policies, and prevents role escalation. Alumni and lecturer sign-ups start as students while their requested role awaits administrator verification; admin access cannot be self-requested.
+
+After connecting a live project, regenerate `src/lib/supabase/database.types.ts` with `supabase gen types typescript` whenever the schema changes.
+
 ---
 
-## 8. License
+## 8. Routes and access rules
+
+| Route group | Paths | Access |
+| :--- | :--- | :--- |
+| Public ecosystem | `/`, `/community`, `/faculties`, `/events`, `/events/:id`, `/calendar`, `/careers`, `/alumni`, `/alumni/:id`, `/profile/:id`, `/mentorship` | Public; actions still follow the active user role. |
+| Authentication | `/login`, `/register`, `/forgot-password`, `/admin-login`, `/unauthorized` | Public. `/admin-login` redirects to the unified login page. |
+| Dashboards | `/dashboard`, `/dashboard/student`, `/dashboard/alumni`, `/dashboard/lecturer` | `/dashboard` selects the current role dashboard; individual dashboards are role-protected. |
+| Administration | `/admin`, `/admin/users`, `/admin/events`, `/admin/careers`, `/admin/verification`, `/admin/moderation`, `/admin/analytics`, `/admin/settings` | `ADMIN` only. |
+| Account workspace | `/settings`, `/announcements` | Authenticated members only. |
+| Fallback | Any unknown path | Renders the CAMPLY 404 page. |
+
+`ProtectedRoute` redirects unauthenticated visitors to `/login` and unauthorized roles to `/unauthorized`. The original destination is retained in router state so future sign-in flows can return the user appropriately.
+
+---
+
+## 9. State, mock data, and API boundaries
+
+| Store | Owns | Persistence / initial data |
+| :--- | :--- | :--- |
+| `useAuthStore` | Session profile, active role, sign-in, registration, profile edits | Session profile is stored locally for the prototype; live sign-out also closes the Supabase session. |
+| `useEventStore` | Events, search/category/date filters, registration and save actions | Event mutations use local storage and begin from `createMockEvents()`. |
+| `useCareerStore` | Job listings, filters, saved jobs, applications, job publishing | Job mutations use local storage and begin from `createMockJobs()`. |
+| `useCommunityStore` | Member filters, connections, follows, messages, notifications | Starts from cloned member and notification fixtures. |
+| `useMentorshipStore` | Mentorship requests and mentor decisions | Starts from `createMockMentorshipRequests()`. |
+
+`mockData.ts` is the read-only source fixture. `mockState.ts` clones fixture arrays before they enter a store, preventing interactions such as registration, saving, or filtering from leaking into another feature's initial data. UI-only flags such as `is_saved`, `is_registered`, and `is_applied` remain in the frontend model until their corresponding backend tables are wired in.
+
+---
+
+## 10. Supabase integration behavior
+
+The app remains usable without Supabase credentials. When `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` contain valid values, the typed client is enabled; both `https://` hosted projects and a local `http://` Supabase stack are supported.
+
+- Sign-in uses Supabase email/password authentication and resolves the application profile through `profiles.auth_user_id`.
+- Sign-up sends profile metadata to Supabase Auth. The database trigger creates the linked profile, and email confirmation is handled before the application treats the session as authenticated.
+- Student registrations are created as verified students. Alumni and lecturer selections are recorded as requested roles and remain student accounts until an administrator verifies them.
+- The migration enables RLS for application tables. Policies are ownership-aware for profiles, events, jobs, registrations, applications, saved items, connections, mentorship, notifications, and reports.
+- `src/lib/supabase/mappers.ts` is the boundary between nullable database rows and stable UI models. Extend this layer rather than casting database rows directly in page components.
+
+Do not place a Supabase service-role key in any `VITE_` variable. Browser code must use only the anon/publishable key.
+
+---
+
+## 11. Verification checklist
+
+Run these checks before handing the project to the next integration phase:
+
+```bash
+npm run build
+```
+
+The command runs TypeScript project checking and creates the production Vite bundle. For local route smoke testing, run `npm run dev` and open a public route, a protected dashboard route, an admin route, and an unknown URL. The SPA server should return the app shell; React Router then enforces access or renders the 404 page.
+
+For a live backend, apply both migrations, configure `.env.local`, register a test student account, and verify that a `profiles.auth_user_id` value is created. Test an alumni or lecturer sign-up separately to confirm it remains pending until an administrator changes the role.
+
+---
+
+## 12. License
 
 This project was developed for the CAMPLY platform under the MIT License.

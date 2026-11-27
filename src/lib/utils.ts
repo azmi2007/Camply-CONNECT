@@ -22,6 +22,27 @@ export function formatTimeRange(start: string, end: string): string {
   return `${start.slice(0, 5)} - ${end.slice(0, 5)}`;
 }
 
+/** Formats API timestamps for compact UI surfaces without storing presentation text in data. */
+export function formatRelativeTime(dateString: string): string {
+  const timestamp = new Date(dateString).getTime();
+  if (Number.isNaN(timestamp)) return dateString;
+
+  const seconds = Math.round((timestamp - Date.now()) / 1000);
+  const ranges: Array<[Intl.RelativeTimeFormatUnit, number]> = [
+    ['year', 60 * 60 * 24 * 365],
+    ['month', 60 * 60 * 24 * 30],
+    ['week', 60 * 60 * 24 * 7],
+    ['day', 60 * 60 * 24],
+    ['hour', 60 * 60],
+    ['minute', 60]
+  ];
+
+  if (Math.abs(seconds) < 60) return 'Just now';
+
+  const [unit, interval] = ranges.find(([, value]) => Math.abs(seconds) >= value) || ['minute', 60];
+  return new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(Math.round(seconds / interval), unit);
+}
+
 export function getRoleBadgeColor(role: string): { bg: string; text: string; border: string; dot: string } {
   switch (role) {
     case 'STUDENT':

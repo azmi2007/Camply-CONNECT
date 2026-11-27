@@ -1,5 +1,7 @@
 import { create } from 'zustand';
-import { MentorshipRequest } from '../types';
+import { MentorshipRequest, MentorshipStatus } from '../types';
+import { createMockMentorshipRequests } from '../data/mockState';
+import { useAuthStore } from './useAuthStore';
 
 interface MentorshipState {
   requests: MentorshipRequest[];
@@ -9,33 +11,22 @@ interface MentorshipState {
     message: string;
     preferredSchedule?: string;
   }) => void;
-  updateRequestStatus: (requestId: string, status: 'ACCEPTED' | 'REJECTED' | 'COMPLETED') => void;
+  updateRequestStatus: (requestId: string, status: Exclude<MentorshipStatus, 'PENDING'>) => void;
 }
 
-const INITIAL_REQUESTS: MentorshipRequest[] = [
-  {
-    id: 'req-01',
-    student_id: 'user-student-01',
-    mentor_id: 'user-alumni-01',
-    topic: 'Design Systems Portfolio Review',
-    message: 'Hi Sarah! I loved your recent talk on UI component architecture. Could I get your feedback on my case study?',
-    preferredSchedule: 'Thursday afternoons (Zoom)',
-    status: 'ACCEPTED',
-    created_at: '2026-11-10T14:00:00Z'
-  }
-];
-
 export const useMentorshipStore = create<MentorshipState>((set) => ({
-  requests: INITIAL_REQUESTS,
+  requests: createMockMentorshipRequests(),
 
   sendMentorshipRequest: (params) => {
+    const currentUser = useAuthStore.getState().user;
+    if (!currentUser) return;
     const newRequest: MentorshipRequest = {
       id: `req-${Date.now()}`,
-      student_id: 'user-student-01',
+      student_id: currentUser.id,
       mentor_id: params.mentorId,
       topic: params.topic,
       message: params.message,
-      preferredSchedule: params.preferredSchedule,
+      preferred_schedule: params.preferredSchedule,
       status: 'PENDING',
       created_at: new Date().toISOString()
     };
@@ -46,6 +37,7 @@ export const useMentorshipStore = create<MentorshipState>((set) => ({
   },
 
   updateRequestStatus: (requestId, status) => {
+    if (!useAuthStore.getState().isAuthenticated) return;
     set((state) => ({
       requests: state.requests.map((r) => 
         r.id === requestId ? { ...r, status } : r

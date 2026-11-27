@@ -19,6 +19,7 @@ import {
   Check
 } from 'lucide-react';
 import { formatDate } from '../../lib/utils';
+import { useRequireAuthentication } from '../../features/auth/useRequireAuthentication';
 
 type EventTab = 'all' | 'upcoming' | 'featured' | 'past';
 type DateWindow = 'all' | 'this-week' | 'this-month' | 'next-month';
@@ -26,6 +27,7 @@ type DateWindow = 'all' | 'this-week' | 'this-month' | 'next-month';
 export const EventsPage: React.FC = () => {
   const navigate = useNavigate();
   const { events, registerEvent, cancelRegistration } = useEventStore();
+  const requireAuthentication = useRequireAuthentication();
 
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<EventCategory>('All Events');
@@ -107,7 +109,9 @@ export const EventsPage: React.FC = () => {
           <Button
             variant="primary"
             size="md"
-            onClick={() => setIsCreateOpen(true)}
+            onClick={() => {
+              if (requireAuthentication()) setIsCreateOpen(true);
+            }}
             icon={<Plus className="w-4 h-4" />}
           >
             Host an Event
@@ -284,6 +288,7 @@ export const EventsPage: React.FC = () => {
                     size="sm"
                     onClick={(e) => {
                       e.stopPropagation();
+                      if (!requireAuthentication()) return;
                       if (ev.is_registered) cancelRegistration(ev.id);
                       else registerEvent(ev.id);
                     }}

@@ -149,8 +149,8 @@ export const AlumniDashboard: React.FC = () => {
                   </span>
                 </div>
                 <p className="text-xs text-neutral-600 italic">"{req.message}"</p>
-                {req.preferredSchedule && (
-                  <p className="text-[11px] text-neutral-400">Preferred: {req.preferredSchedule}</p>
+                {req.preferred_schedule && (
+                  <p className="text-[11px] text-neutral-400">Preferred: {req.preferred_schedule}</p>
                 )}
                 {req.status === 'PENDING' && (
                   <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-200/60 mt-1">
