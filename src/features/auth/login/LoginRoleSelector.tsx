@@ -21,7 +21,7 @@ export const LoginRoleSelector: React.FC<LoginRoleSelectorProps> = ({
     {
       id: 'STUDENT',
       label: 'Student',
-      subtitle: 'NIM Login',
+      subtitle: 'Student ID Login',
       icon: GraduationCap
     },
     {
@@ -33,7 +33,7 @@ export const LoginRoleSelector: React.FC<LoginRoleSelectorProps> = ({
     {
       id: 'LECTURER',
       label: 'Lecturer',
-      subtitle: 'NIDN / NIP',
+      subtitle: 'Lecturer ID (NIDN / NIP)',
       icon: BookOpen
     }
   ];

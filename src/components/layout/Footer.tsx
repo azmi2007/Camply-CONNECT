@@ -64,9 +64,7 @@ export const Footer: React.FC = () => {
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-400">
           <p>© {new Date().getFullYear()} CAMPLY Network Inc. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <span>Built with React, TypeScript & Vite</span>
             <span className="text-neutral-300">•</span>
-            <span>Clean Light Aesthetic</span>
           </div>
         </div>
       </div>

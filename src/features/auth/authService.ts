@@ -25,16 +25,16 @@ export interface DemoLoginAccount {
 }
 
 /**
- * Akun ini hanya untuk demonstrasi/prototipe lokal. Pada production, akun dan
- * role harus divalidasi oleh provider autentikasi (misalnya Supabase).
+ * These accounts are only for the local demo/prototype. In production, accounts
+ * and roles must be validated by an authentication provider (such as Supabase).
  */
 export const DEMO_LOGIN_ACCOUNTS: DemoLoginAccount[] = [
   {
     role: 'STUDENT',
-    label: 'Mahasiswa',
+    label: 'Student',
     identifier: '23100001',
     password: 'mahasiswa123',
-    placeholder: 'Contoh: 23100001',
+    placeholder: 'Example: 23100001',
     identifiers: ['23100001', DEMO_USERS.student.email]
   },
   {
@@ -42,15 +42,15 @@ export const DEMO_LOGIN_ACCOUNTS: DemoLoginAccount[] = [
     label: 'Alumni',
     identifier: 'ALM-2021-001',
     password: 'alumni123',
-    placeholder: 'Contoh: ALM-2021-001',
+    placeholder: 'Example: ALM-2021-001',
     identifiers: ['ALM-2021-001', 'alumni@camply.demo', DEMO_USERS.alumni.email]
   },
   {
     role: 'LECTURER',
-    label: 'Dosen',
+    label: 'Lecturer',
     identifier: 'DSN-001',
     password: 'dosen123',
-    placeholder: 'Contoh: DSN-001',
+    placeholder: 'Example: DSN-001',
     identifiers: ['DSN-001', '0012345678', DEMO_USERS.lecturer.lecturer_id || '', DEMO_USERS.lecturer.email]
   },
   {
@@ -58,7 +58,7 @@ export const DEMO_LOGIN_ACCOUNTS: DemoLoginAccount[] = [
     label: 'Admin',
     identifier: 'ADM-001',
     password: 'admin123',
-    placeholder: 'Contoh: ADM-001',
+    placeholder: 'Example: ADM-001',
     identifiers: ['ADM-001', 'admin', DEMO_USERS.admin.email]
   }
 ];
@@ -81,7 +81,7 @@ export const authService = {
     const password = credentials.password;
 
     if (!identifier || !password) {
-      return { success: false, error: 'Masukkan ID akun dan kata sandi terlebih dahulu.' };
+      return { success: false, error: 'Enter your account ID and password first.' };
     }
 
     // Production Supabase path when configured
@@ -91,7 +91,7 @@ export const authService = {
         password
       });
       if (error || !data.user) {
-        return { success: false, error: error?.message || 'ID akun atau kata sandi tidak valid.' };
+        return { success: false, error: error?.message || 'The account ID or password is invalid.' };
       }
       const { data: profileData } = await supabase
         .from('profiles')
@@ -110,7 +110,7 @@ export const authService = {
     );
 
     if (!account || password !== account.password) {
-      return { success: false, error: 'ID akun atau kata sandi tidak valid.' };
+      return { success: false, error: 'The account ID or password is invalid.' };
     }
 
     const baseUser = demoUserByRole[account.role];
