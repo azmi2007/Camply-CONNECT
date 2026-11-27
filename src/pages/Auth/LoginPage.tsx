@@ -20,12 +20,12 @@ export const LoginPage: React.FC = () => {
       const result = await loginWithCredentials({ identifier, password });
 
       if (!result.success || !result.user) {
-        setError(result.error || 'Autentikasi gagal.');
+        setError(result.error || 'Authentication failed.');
         return;
       }
 
       const authenticatedUser = result.user;
-      setSuccessMessage(`Berhasil masuk sebagai ${authenticatedUser.full_name}. Mengarahkan ke dashboard...`);
+      setSuccessMessage(`Signed in as ${authenticatedUser.full_name}. Redirecting to your dashboard...`);
       window.setTimeout(() => navigate(getDefaultDashboardRoute(authenticatedUser.role), { replace: true }), 400);
     } finally {
       setIsLoading(false);
@@ -43,15 +43,15 @@ export const LoginPage: React.FC = () => {
             <div className="max-w-sm py-8 lg:my-auto lg:py-0">
               <p className="mb-4 text-xs font-semibold tracking-[0.16em] text-[#B7AEFF] uppercase">Campus network</p>
               <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-                Semua koneksi kampus, dalam satu tempat.
+                All your campus connections, in one place.
               </h1>
               <p className="mt-5 text-sm leading-6 text-neutral-300">
-                Masuk untuk melanjutkan aktivitas, koneksi, dan peluang yang relevan dengan peran Anda di CAMPLY.
+                Sign in to continue with activities, connections, and opportunities tailored to your role at CAMPLY.
               </p>
             </div>
 
             <p className="text-xs leading-5 text-neutral-400">
-              Untuk mahasiswa, alumni, dan dosen di jaringan kampus Anda.
+              For students, alumni, and lecturers across your university network.
             </p>
           </div>
         </aside>
@@ -59,12 +59,12 @@ export const LoginPage: React.FC = () => {
         <div className="flex items-center px-6 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-14">
           <div className="mx-auto w-full max-w-md">
             <div className="mb-8">
-              <p className="text-sm font-medium text-[#7865F5]">Selamat datang kembali</p>
+              <p className="text-sm font-medium text-[#7865F5]">Welcome back</p>
               <h2 className="mt-2 text-3xl font-bold tracking-tight text-[#111111] dark:text-[#F5F5F5]">
-                Masuk ke akun Anda
+                Sign in to your account
               </h2>
               <p className="mt-2 text-sm leading-6 text-[#6B6B6B] dark:text-[#A0A0A0]">
-                Gunakan ID akun atau email institusi yang telah terdaftar.
+                Use your registered account ID or university email.
               </p>
             </div>
 
@@ -76,7 +76,7 @@ export const LoginPage: React.FC = () => {
             />
 
             <p className="mt-7 text-center text-sm text-[#6B6B6B] dark:text-[#A0A0A0]">
-              Belum punya akun?{' '}
+              Don't have an account?{' '}
               <Link
                 to="/register"
                 className="font-semibold text-[#7865F5] underline-offset-4 transition-colors hover:text-[#6752EE] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7865F5] focus-visible:ring-offset-2"

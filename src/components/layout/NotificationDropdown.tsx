@@ -21,17 +21,17 @@ const notificationMeta: Record<NotificationItem['type'], {
   iconClassName: string;
 }> = {
   CONNECTION: {
-    label: 'Koneksi',
+    label: 'Connection',
     icon: UserPlus,
     iconClassName: 'bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-300'
   },
   EVENT: {
-    label: 'Acara',
+    label: 'Event',
     icon: CalendarDays,
     iconClassName: 'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300'
   },
   JOB: {
-    label: 'Karier',
+    label: 'Career',
     icon: BriefcaseBusiness,
     iconClassName: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300'
   },
@@ -41,7 +41,7 @@ const notificationMeta: Record<NotificationItem['type'], {
     iconClassName: 'bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-300'
   },
   SYSTEM: {
-    label: 'Sistem',
+    label: 'System',
     icon: BellRing,
     iconClassName: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300'
   }
@@ -91,7 +91,7 @@ export const NotificationDropdown: React.FC = () => {
       <button
         type="button"
         onClick={() => setOpen((isOpen) => !isOpen)}
-        aria-label={unreadCount > 0 ? `Notifikasi, ${unreadCount} belum dibaca` : 'Notifikasi'}
+        aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
         aria-expanded={open}
         aria-controls="notification-popover"
         aria-haspopup="dialog"
@@ -114,7 +114,7 @@ export const NotificationDropdown: React.FC = () => {
           <motion.section
             id="notification-popover"
             role="dialog"
-            aria-label="Notifikasi"
+            aria-label="Notifications"
             initial={{ opacity: 0, y: -6, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.98 }}
@@ -123,11 +123,11 @@ export const NotificationDropdown: React.FC = () => {
           >
             <div className="flex items-center justify-between gap-4 border-b border-[#EAEAEA] px-4 py-3 dark:border-[#2C2F38]">
               <div>
-                <h2 className="text-sm font-extrabold text-[#111111] dark:text-[#F5F5F5]">Notifikasi</h2>
+                <h2 className="text-sm font-extrabold text-[#111111] dark:text-[#F5F5F5]">Notifications</h2>
                 <p className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">
                   {unreadCount > 0
-                    ? `${unreadCount} aktivitas perlu perhatian`
-                    : 'Semua notifikasi sudah dibaca'}
+                    ? `${unreadCount} activities need your attention`
+                    : 'All notifications are read'}
                 </p>
               </div>
 
@@ -135,11 +135,11 @@ export const NotificationDropdown: React.FC = () => {
                 type="button"
                 onClick={markAllNotificationsRead}
                 disabled={unreadCount === 0}
-                aria-label="Tandai semua notifikasi sebagai sudah dibaca"
+                aria-label="Mark all notifications as read"
                 className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-bold text-[#6752EE] transition-colors hover:bg-[#F1EEFF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7865F5] disabled:cursor-default disabled:text-neutral-400 disabled:hover:bg-transparent dark:text-[#B9AEFF] dark:hover:bg-[#7865F5]/10 dark:disabled:text-neutral-600"
               >
                 <CheckCheck className="h-3.5 w-3.5" />
-                Tandai semua
+                Mark all
               </button>
             </div>
 
@@ -154,7 +154,7 @@ export const NotificationDropdown: React.FC = () => {
                       key={notification.id}
                       type="button"
                       onClick={() => handleNotificationClick(notification)}
-                      aria-label={`${notification.title}. Klik untuk melihat detail.`}
+                      aria-label={`${notification.title}. Click to view details.`}
                       className={`group relative flex w-full gap-3 rounded-xl px-3 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7865F5] focus-visible:ring-inset ${
                         notification.is_read
                           ? 'hover:bg-neutral-50 dark:hover:bg-[#20232B]'
@@ -171,7 +171,7 @@ export const NotificationDropdown: React.FC = () => {
                             {meta.label}
                           </span>
                           {!notification.is_read && (
-                            <span className="h-1.5 w-1.5 rounded-full bg-[#7865F5]" aria-label="Belum dibaca" />
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#7865F5]" aria-label="Unread" />
                           )}
                         </span>
                         <span className="mt-0.5 block pr-1 text-xs font-bold leading-snug text-[#111111] dark:text-[#F5F5F5]">
@@ -182,7 +182,7 @@ export const NotificationDropdown: React.FC = () => {
                         </span>
                         <span className="mt-2 flex items-center gap-1.5 text-[10px] font-medium text-neutral-400 dark:text-neutral-500">
                           <span>{notification.created_at}</span>
-                          {notification.is_read && <Check className="h-3 w-3" aria-label="Sudah dibaca" />}
+                          {notification.is_read && <Check className="h-3 w-3" aria-label="Read" />}
                         </span>
                       </span>
                     </button>
@@ -194,9 +194,9 @@ export const NotificationDropdown: React.FC = () => {
                 <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F8F8F8] text-neutral-400 dark:bg-[#20232B] dark:text-neutral-500">
                   <Inbox className="h-5 w-5" />
                 </span>
-                <h3 className="mt-3 text-sm font-bold text-[#111111] dark:text-[#F5F5F5]">Tidak ada notifikasi</h3>
+                <h3 className="mt-3 text-sm font-bold text-[#111111] dark:text-[#F5F5F5]">No notifications</h3>
                 <p className="mt-1 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
-                  Aktivitas terbaru dari kampus akan muncul di sini.
+                  Recent campus activity will appear here.
                 </p>
               </div>
             )}

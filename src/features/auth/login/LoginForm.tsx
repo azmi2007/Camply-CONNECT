@@ -53,7 +53,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label htmlFor="login-identifier" className="mb-2 block text-sm font-medium text-[#242424] dark:text-[#E4E4E4]">
-            ID akun atau email institusi
+            Account ID or university email
           </label>
           <div className="relative">
             <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" aria-hidden="true" />
@@ -67,7 +67,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 setIdentifier(event.target.value);
                 setSelectedAccount(null);
               }}
-              placeholder="NIM, ID alumni, atau ID dosen"
+              placeholder="Student ID, alumni ID, or lecturer ID"
               className="w-full rounded-xl border border-[#DCDCDC] bg-white py-3 pl-10 pr-4 text-sm text-[#111111] outline-none transition-colors placeholder:text-neutral-400 focus:border-[#7865F5] focus:ring-3 focus:ring-[#7865F5]/15 dark:border-[#3A3D47] dark:bg-[#20232B] dark:text-[#F5F5F5]"
             />
           </div>
@@ -76,10 +76,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         <div>
           <div className="mb-2 flex items-center justify-between gap-4">
             <label htmlFor="login-password" className="block text-sm font-medium text-[#242424] dark:text-[#E4E4E4]">
-              Kata sandi
+              Password
             </label>
             <Link to="/forgot-password" className="text-sm font-medium text-[#7865F5] underline-offset-4 hover:text-[#6752EE] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7865F5]">
-              Lupa sandi?
+              Forgot password?
             </Link>
           </div>
           <div className="relative">
@@ -94,7 +94,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 setPassword(event.target.value);
                 setSelectedAccount(null);
               }}
-              placeholder="Masukkan kata sandi"
+              placeholder="Enter your password"
               className="w-full rounded-xl border border-[#DCDCDC] bg-white py-3 pl-10 pr-4 text-sm text-[#111111] outline-none transition-colors placeholder:text-neutral-400 focus:border-[#7865F5] focus:ring-3 focus:ring-[#7865F5]/15 dark:border-[#3A3D47] dark:bg-[#20232B] dark:text-[#F5F5F5]"
             />
           </div>
@@ -107,16 +107,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           isLoading={isLoading}
           className="mt-1 w-full rounded-xl"
         >
-          Masuk
+          Sign In
         </Button>
       </form>
 
       <details className="border-t border-[#EAEAEA] pt-5 dark:border-[#2C2F38]">
         <summary className="cursor-pointer text-sm font-medium text-[#4E4E4E] marker:text-[#7865F5] dark:text-[#C9C9C9]">
-          Gunakan akun demo
+          Use a demo account
         </summary>
         <p className="mt-2 text-xs leading-5 text-[#777777] dark:text-[#A0A0A0]">
-          Pilih salah satu peran untuk mengisi kredensial secara otomatis.
+          Select a role to fill in the credentials automatically.
         </p>
         <div className="mt-3 grid gap-2 sm:grid-cols-3">
           {publicDemoAccounts.map((account) => {
