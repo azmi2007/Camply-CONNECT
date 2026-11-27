@@ -54,7 +54,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label htmlFor="login-identifier" className="mb-2 block text-sm font-medium text-[#242424] dark:text-[#E4E4E4]">
-            Account ID or institutional email
+            Account ID or university email
           </label>
           <div className="relative">
             <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" aria-hidden="true" />

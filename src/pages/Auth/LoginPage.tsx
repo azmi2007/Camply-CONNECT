@@ -25,7 +25,7 @@ export const LoginPage: React.FC = () => {
       }
 
       const authenticatedUser = result.user;
-      setSuccessMessage(`Signed in as ${authenticatedUser.full_name}. Redirecting to dashboard...`);
+      setSuccessMessage(`Signed in as ${authenticatedUser.full_name}. Redirecting to your dashboard...`);
       window.setTimeout(() => navigate(getDefaultDashboardRoute(authenticatedUser.role), { replace: true }), 400);
     } finally {
       setIsLoading(false);
@@ -64,7 +64,7 @@ export const LoginPage: React.FC = () => {
                 Sign in to your account
               </h2>
               <p className="mt-2 text-sm leading-6 text-[#6B6B6B] dark:text-[#A0A0A0]">
-                Use your registered account ID or institutional email.
+                Use your registered account ID or university email.
               </p>
             </div>
 

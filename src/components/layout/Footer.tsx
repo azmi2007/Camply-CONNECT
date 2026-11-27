@@ -13,13 +13,13 @@ export const Footer: React.FC = () => {
               <CamplyMark className="h-9 w-12" />
               <span className="text-xl font-extrabold tracking-[0.12em] text-[#111111]">CAMPLY</span>
             </Link>
-            <p className="text-sm font-medium text-neutral-500 mb-2">
+            <p className="text-[15px] font-medium text-neutral-500 mb-3">
               "Your Campus. Your People. Your Future."
             </p>
-            <p className="text-xs text-neutral-400 max-w-sm leading-relaxed mb-6">
-              A premium university ecosystem connecting students, alumni, lecturers, and corporate partners through professional networking, curated campus events, mentorship, and career opportunities.
+            <p className="footer-highlight mb-7">
+              Where students, alumni, faculty, and industry connect for mentorship and career growth.
             </p>
-            <div className="flex items-center gap-2 text-xs text-neutral-400">
+            <div className="flex items-center gap-2 text-[15px] text-neutral-400">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>Campus network operational & active across partner universities</span>
             </div>
@@ -27,8 +27,8 @@ export const Footer: React.FC = () => {
 
           {/* Navigation Columns */}
           <div>
-            <h5 className="font-bold text-neutral-900 text-xs uppercase tracking-wider mb-4">Platform</h5>
-            <ul className="flex flex-col gap-2.5 text-xs text-neutral-500">
+            <h5 className="font-bold text-neutral-900 text-sm uppercase tracking-wide mb-4">Platform</h5>
+            <ul className="flex flex-col gap-2.5 text-[15px] text-neutral-500">
               <li><Link to="/community" className="hover:text-neutral-900 transition-colors">Explore Community</Link></li>
               <li><Link to="/faculties" className="hover:text-neutral-900 transition-colors">Fields & Faculties</Link></li>
               <li><Link to="/events" className="hover:text-neutral-900 transition-colors">Events & Workshops</Link></li>
@@ -40,8 +40,8 @@ export const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h5 className="font-bold text-neutral-900 text-xs uppercase tracking-wider mb-4">Ecosystem</h5>
-            <ul className="flex flex-col gap-2.5 text-xs text-neutral-500">
+            <h5 className="font-bold text-neutral-900 text-sm uppercase tracking-wide mb-4">Ecosystem</h5>
+            <ul className="flex flex-col gap-2.5 text-[15px] text-neutral-500">
               <li><Link to="/dashboard" className="hover:text-neutral-900 transition-colors">Student Portal</Link></li>
               <li><Link to="/dashboard" className="hover:text-neutral-900 transition-colors">Alumni Network</Link></li>
               <li><Link to="/dashboard" className="hover:text-neutral-900 transition-colors">Faculty & Research</Link></li>
@@ -50,8 +50,8 @@ export const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h5 className="font-bold text-neutral-900 text-xs uppercase tracking-wider mb-4">Governance</h5>
-            <ul className="flex flex-col gap-2.5 text-xs text-neutral-500">
+            <h5 className="font-bold text-neutral-900 text-sm uppercase tracking-wide mb-4">Governance</h5>
+            <ul className="flex flex-col gap-2.5 text-[15px] text-neutral-500">
               <li><span className="text-neutral-400">Student Code of Conduct</span></li>
               <li><span className="text-neutral-400">Privacy & Data Security</span></li>
               <li><span className="text-neutral-400">University Partnerships</span></li>
@@ -61,12 +61,10 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Credits */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-400">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[15px] text-neutral-400">
           <p>© {new Date().getFullYear()} CAMPLY Network Inc. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <span>Built with React, TypeScript & Vite</span>
             <span className="text-neutral-300">•</span>
-            <span>Clean Light Aesthetic</span>
           </div>
         </div>
       </div>

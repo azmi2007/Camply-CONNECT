@@ -25,8 +25,8 @@ export interface DemoLoginAccount {
 }
 
 /**
- * These accounts are for the local prototype only. In production, accounts
- * and roles must be validated by an authentication provider (for example, Supabase).
+ * These accounts are only for the local demo/prototype. In production, accounts
+ * and roles must be validated by an authentication provider (such as Supabase).
  */
 export const DEMO_LOGIN_ACCOUNTS: DemoLoginAccount[] = [
   {
