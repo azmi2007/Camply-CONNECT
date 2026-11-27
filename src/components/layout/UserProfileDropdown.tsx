@@ -48,7 +48,7 @@ export const UserProfileDropdown: React.FC = () => {
           alt={user.full_name}
           className="w-7 h-7 rounded-full object-cover"
         />
-        <span className="hidden sm:inline text-xs font-semibold text-[#111111] dark:text-[#F5F5F5] max-w-[100px] truncate">
+        <span className="hidden sm:inline text-sm font-semibold text-[#111111] dark:text-[#F5F5F5] max-w-[100px] truncate">
           {user.full_name.split(' ')[0]}
         </span>
         <span className="hidden md:inline">
@@ -66,7 +66,7 @@ export const UserProfileDropdown: React.FC = () => {
               className="w-10 h-10 rounded-xl object-cover"
             />
             <div className="overflow-hidden">
-              <h5 className="font-bold text-[#111111] dark:text-[#F5F5F5] text-xs truncate">
+              <h5 className="font-bold text-[#111111] dark:text-[#F5F5F5] text-sm truncate">
                 {user.full_name}
               </h5>
               <p className="text-[11px] text-[#929292] truncate">{user.email}</p>
@@ -74,7 +74,7 @@ export const UserProfileDropdown: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-1 text-xs">
+          <div className="flex flex-col gap-1 text-sm">
             <Link
               to={dashboardRoute}
               onClick={() => setOpen(false)}
