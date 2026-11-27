@@ -5,7 +5,8 @@ import {
   CalendarDays,
   Briefcase,
   Users,
-  Building2
+  Building2,
+  Menu
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useCommunityStore } from '../../store/useCommunityStore';
@@ -33,6 +34,7 @@ export const Navbar: React.FC = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [globalQuery, setGlobalQuery] = useState('');
   const isAuthenticationPage = location.pathname === '/login' || location.pathname === '/register';
+  const isHomePage = location.pathname === '/';
 
   const searchResults = useMemo(() => {
     const q = globalQuery.trim().toLowerCase();
@@ -81,14 +83,18 @@ export const Navbar: React.FC = () => {
     <>
       <header className="sticky top-0 z-40 w-full bg-white/85 dark:bg-[#181A20]/90 backdrop-blur-md border-b border-[#EAEAEA] dark:border-[#2C2F38] transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-4">
-          {/* LEFT: Brand mark trigger for Sidebar */}
+          {/* LEFT: Signed-in pages use a hamburger trigger; Home keeps the brand mark */}
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            className="group -ml-1 flex items-center gap-2 rounded-xl p-1 transition-colors hover:bg-neutral-100/70 dark:hover:bg-[#20232B]"
+            className="group -ml-1 flex items-center gap-2 rounded-xl p-2 transition-colors hover:bg-neutral-100/70 dark:hover:bg-[#20232B]"
             aria-label="Open CAMPLY navigation sidebar"
           >
-            <CamplyMark className="h-10 w-[53px] transition-transform duration-200 group-hover:scale-[1.04]" />
+            {isAuthenticated && !isHomePage ? (
+              <Menu className="h-5 w-5 text-[#111111] transition-transform duration-200 group-hover:scale-[1.04] dark:text-[#F5F5F5]" aria-hidden="true" />
+            ) : (
+              <CamplyMark className="h-10 w-[53px] transition-transform duration-200 group-hover:scale-[1.04]" />
+            )}
             <span className="text-lg font-extrabold tracking-[0.12em] text-[#111111] dark:text-[#F5F5F5]">CAMPLY</span>
           </button>
 
