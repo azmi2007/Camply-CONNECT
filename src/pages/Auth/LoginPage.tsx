@@ -43,15 +43,15 @@ export const LoginPage: React.FC = () => {
             <div className="max-w-sm py-8 lg:my-auto lg:py-0">
               <p className="mb-4 text-xs font-semibold tracking-[0.16em] text-[#B7AEFF] uppercase">Campus network</p>
               <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-                All your campus connections, in one place.
+                Every campus connection, in one place.
               </h1>
               <p className="mt-5 text-sm leading-6 text-neutral-300">
-                Sign in to continue with activities, connections, and opportunities tailored to your role at CAMPLY.
+                Sign in to continue your activities, connections, and opportunities relevant to your role at CAMPLY.
               </p>
             </div>
 
             <p className="text-xs leading-5 text-neutral-400">
-              For students, alumni, and lecturers across your university network.
+              For students, alumni, and lecturers in your campus network.
             </p>
           </div>
         </aside>

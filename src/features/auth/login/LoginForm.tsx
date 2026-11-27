@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, CheckCircle2, Lock, User } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Eye, EyeOff, Lock, User } from 'lucide-react';
 import { DEMO_LOGIN_ACCOUNTS } from '../authService';
 import { Button } from '../../../components/ui/Button';
 
@@ -21,6 +21,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 }) => {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
   const handleFillDemo = (account: (typeof DEMO_LOGIN_ACCOUNTS)[number]) => {
@@ -86,7 +87,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" aria-hidden="true" />
             <input
               id="login-password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               required
               autoComplete="current-password"
               value={password}
@@ -95,8 +96,21 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 setSelectedAccount(null);
               }}
               placeholder="Enter your password"
-              className="w-full rounded-xl border border-[#DCDCDC] bg-white py-3 pl-10 pr-4 text-sm text-[#111111] outline-none transition-colors placeholder:text-neutral-400 focus:border-[#7865F5] focus:ring-3 focus:ring-[#7865F5]/15 dark:border-[#3A3D47] dark:bg-[#20232B] dark:text-[#F5F5F5]"
+              className="w-full rounded-xl border border-[#DCDCDC] bg-white py-3 pl-10 pr-12 text-sm text-[#111111] outline-none transition-colors placeholder:text-neutral-400 focus:border-[#7865F5] focus:ring-3 focus:ring-[#7865F5]/15 dark:border-[#3A3D47] dark:bg-[#20232B] dark:text-[#F5F5F5]"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((visible) => !visible)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-pressed={showPassword}
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-neutral-400 transition-colors hover:text-[#7865F5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7865F5] dark:hover:text-[#A99BFF]"
+            >
+              {showPassword ? (
+                <Eye className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <EyeOff className="h-4 w-4" aria-hidden="true" />
+              )}
+            </button>
           </div>
         </div>
 
@@ -107,7 +121,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           isLoading={isLoading}
           className="mt-1 w-full rounded-xl"
         >
-          Sign In
+          Sign in
         </Button>
       </form>
 

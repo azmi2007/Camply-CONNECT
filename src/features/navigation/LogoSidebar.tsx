@@ -107,7 +107,6 @@ export const LogoSidebar: React.FC<LogoSidebarProps> = ({ isOpen, onClose }) => 
         {
           title: 'PUBLIC ECOSYSTEM',
           items: [
-            { label: 'Home', path: '/', icon: Home },
             { label: 'Community', path: '/community', icon: Users },
             { label: 'Events', path: '/events', icon: Calendar },
             { label: 'Calendar', path: '/calendar', icon: CalendarDays }
@@ -125,7 +124,7 @@ export const LogoSidebar: React.FC<LogoSidebarProps> = ({ isOpen, onClose }) => 
         {
           title: 'MAIN MENU',
           items: [
-            { label: 'Home', path: '/', icon: Home },
+            { label: 'Dashboard', path: '/dashboard/lecturer', icon: LayoutDashboard },
             { label: 'Community', path: '/community', icon: Users },
             { label: 'Events', path: '/events', icon: Calendar },
             { label: 'Calendar', path: '/calendar', icon: CalendarDays },
@@ -136,7 +135,6 @@ export const LogoSidebar: React.FC<LogoSidebarProps> = ({ isOpen, onClose }) => 
         {
           title: 'LECTURER WORKSPACE',
           items: [
-            { label: 'Lecturer Dashboard', path: '/dashboard/lecturer', icon: LayoutDashboard },
             { label: 'Academic Event Management', path: '/events', icon: Calendar },
             { label: 'Student Community', path: '/community', icon: Users }
           ]
@@ -144,7 +142,7 @@ export const LogoSidebar: React.FC<LogoSidebarProps> = ({ isOpen, onClose }) => 
         {
           title: 'ACCOUNT',
           items: [
-            { label: 'My Profile', path: `/profile/${user?.id}`, icon: User },
+            { label: 'Profile', path: `/profile/${user?.id}`, icon: User },
             { label: 'Settings', path: '/settings', icon: Settings }
           ]
         }
@@ -156,7 +154,7 @@ export const LogoSidebar: React.FC<LogoSidebarProps> = ({ isOpen, onClose }) => 
         {
           title: 'MAIN MENU',
           items: [
-            { label: 'Home', path: '/', icon: Home },
+            { label: 'Dashboard', path: role === 'ALUMNI' ? '/dashboard/alumni' : '/dashboard/student', icon: LayoutDashboard },
             { label: 'Community', path: '/community', icon: Users },
             { label: 'Alumni Directory', path: '/alumni', icon: Award },
             { label: 'Events', path: '/events', icon: Calendar },
@@ -168,8 +166,7 @@ export const LogoSidebar: React.FC<LogoSidebarProps> = ({ isOpen, onClose }) => 
         {
           title: 'ACCOUNT',
           items: [
-            { label: 'My Profile', path: role === 'ALUMNI' ? `/alumni/${user?.id}` : `/profile/${user?.id}`, icon: User },
-            { label: 'My Dashboard', path: role === 'ALUMNI' ? '/dashboard/alumni' : '/dashboard/student', icon: LayoutDashboard },
+            { label: 'Profile', path: role === 'ALUMNI' ? `/alumni/${user?.id}` : `/profile/${user?.id}`, icon: User },
             { label: 'Settings', path: '/settings', icon: Settings }
           ]
         }

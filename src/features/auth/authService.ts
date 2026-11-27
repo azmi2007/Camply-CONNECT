@@ -81,7 +81,7 @@ export const authService = {
     const password = credentials.password;
 
     if (!identifier || !password) {
-      return { success: false, error: 'Enter your account ID and password first.' };
+      return { success: false, error: 'Enter your account ID and password to continue.' };
     }
 
     // Production Supabase path when configured
@@ -91,7 +91,7 @@ export const authService = {
         password
       });
       if (error || !data.user) {
-        return { success: false, error: error?.message || 'The account ID or password is invalid.' };
+        return { success: false, error: error?.message || 'Invalid account ID or password.' };
       }
       const { data: profileData } = await supabase
         .from('profiles')
@@ -110,7 +110,7 @@ export const authService = {
     );
 
     if (!account || password !== account.password) {
-      return { success: false, error: 'The account ID or password is invalid.' };
+      return { success: false, error: 'Invalid account ID or password.' };
     }
 
     const baseUser = demoUserByRole[account.role];
