@@ -184,6 +184,32 @@
   scrollbar-width: none;
 }
 
+/* Partner strip: continuous rightward logo loop */
+@keyframes partner-marquee {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.partner-marquee-track {
+  animation: partner-marquee 36s linear infinite;
+  will-change: transform;
+}
+
+.partner-marquee:hover .partner-marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partner-marquee-track {
+    animation: none;
+    transform: translateX(0);
+  }
+}
+
 /* Glass & Card Elevation Utilities */
 .camply-card {
   background-color: var(--bg-surface);
